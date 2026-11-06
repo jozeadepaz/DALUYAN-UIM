@@ -12,12 +12,14 @@ $command = $argv[1] ?? '';
 $email = strtolower(trim($argv[2] ?? ''));
 $name = trim($argv[3] ?? '');
 $role = strtolower(trim($argv[4] ?? ''));
+$committee = trim($argv[5] ?? '');
 $allowedRoles = ['adviser', 'executive', 'officer'];
+$allowedCommittees = ['Executives', 'CommAIRS', 'CommCREL', 'CommFIMA', 'CommPROL', 'Adviser'];
 
 function usage(): never
 {
     fwrite(STDERR, "Usage:\n");
-    fwrite(STDERR, "  DALUYAN_USER_PASSWORD=<password> php manage-user.php add <email> <name> <adviser|executive|officer>\n");
+    fwrite(STDERR, "  DALUYAN_USER_PASSWORD=<password> php manage-user.php add <email> <name> <adviser|executive|officer> [committee]\n");
     fwrite(STDERR, "  DALUYAN_USER_PASSWORD=<password> php manage-user.php set-password <seeded-email>\n");
     fwrite(STDERR, "  DALUYAN_USER_PASSWORD=<password> php manage-user.php reset-password <email>\n");
     fwrite(STDERR, "  php manage-user.php disable <email>\n");
@@ -30,17 +32,7 @@ if (!in_array($command, ['add', 'set-password', 'reset-password', 'disable'], tr
 
 try {
     if ($command === 'disable') {
-        $found = daluyan_update(static function (array &$data) use ($email): bool {
-            foreach ($data['users'] as &$user) {
-                if (strcasecmp((string) $user['email'], $email) === 0) {
-                    $user['active'] = false;
-                    unset($user);
-                    return true;
-                }
-            }
-            unset($user);
-            return false;
-        });
+        $found = daluyan_disable_user($email);
         if (!$found) {
             fwrite(STDERR, "Account not found.\n");
             exit(1);
@@ -54,42 +46,24 @@ try {
         fwrite(STDERR, "Set DALUYAN_USER_PASSWORD to a password between 12 and 72 bytes.\n");
         exit(2);
     }
-    if ($command === 'add' && (!in_array($role, $allowedRoles, true) || $name === '' || strlen($name) > 160)) {
+    if ($command === 'add' && (!in_array($role, $allowedRoles, true) || $name === '' || strlen($name) > 160 || ($role === 'officer' && !in_array($committee, $allowedCommittees, true)))) {
         usage();
     }
 
-    $result = daluyan_update(static function (array &$data) use ($command, $email, $name, $role, $password): string {
-        foreach ($data['users'] as &$user) {
-            if (strcasecmp((string) $user['email'], $email) === 0) {
-                if ($command === 'add') {
-                    unset($user);
-                    return 'exists';
-                }
-                if ($command === 'set-password' && !empty($user['passwordHash'])) {
-                    unset($user);
-                    return 'already_active';
-                }
-                $user['passwordHash'] = password_hash($password, PASSWORD_DEFAULT);
-                $user['active'] = true;
-                unset($user);
-                return $command === 'set-password' ? 'activated' : 'updated';
+    if ($command === 'add') {
+        try {
+            daluyan_add_user($email, $name, $role, $password, in_array($committee, $allowedCommittees, true) ? $committee : null);
+            $result = 'created';
+        } catch (PDOException $error) {
+            if ($error->getCode() === '23000') {
+                fwrite(STDERR, "Account already exists; use reset-password if needed.\n");
+                exit(1);
             }
+            throw $error;
         }
-        unset($user);
-        if ($command !== 'add') {
-            return 'missing';
-        }
-        $data['users'][] = [
-            'id' => daluyan_uuid(),
-            'name' => $name,
-            'email' => $email,
-            'role' => $role,
-            'passwordHash' => password_hash($password, PASSWORD_DEFAULT),
-            'active' => true,
-            'createdAt' => gmdate(DATE_ATOM)
-        ];
-        return 'created';
-    });
+    } else {
+        $result = daluyan_set_user_password($email, $password, $command === 'set-password');
+    }
 
     if ($result === 'exists') {
         fwrite(STDERR, "Account already exists; use reset-password if needed.\n");

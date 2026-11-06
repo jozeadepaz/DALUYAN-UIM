@@ -17,13 +17,12 @@ try {
             daluyan_json(['csrf' => $_SESSION['csrf'], 'user' => $user]);
         }
         if ($action === 'directory') {
-            $data = daluyan_read();
-            daluyan_json(['officers' => $data['directory']]);
+            daluyan_json(['officers' => daluyan_get_directory()]);
         }
         if ($action === 'dashboard') {
             daluyan_require_permission('reports.view_all');
             $days = filter_var($_GET['days'] ?? 7, FILTER_VALIDATE_INT);
-            daluyan_json(['stats' => daluyan_dashboard_stats(daluyan_read(), is_int($days) ? $days : 7)]);
+            daluyan_json(['stats' => daluyan_dashboard_stats(is_int($days) ? $days : 7)]);
         }
         daluyan_json(['error' => 'Unknown action.'], 404);
     }
@@ -43,25 +42,15 @@ try {
             daluyan_json(['error' => 'Email or password is incorrect.'], 401);
         }
         $key = hash('sha256', $email . '|' . (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
-        $data = daluyan_read();
-        $recentAttempts = array_values(array_filter(
-            $data['loginAttempts'][$key] ?? [],
-            static fn(int $attempt): bool => $attempt > time() - 900
-        ));
-        if (count($recentAttempts) >= 5) {
+        if (daluyan_login_attempt_count($key) >= 5) {
             daluyan_json(['error' => 'Too many sign-in attempts. Try again in 15 minutes.'], 429);
         }
-        $user = daluyan_find_user($data, $email);
+        $user = daluyan_find_user_by_email($email);
         if ($user === null || empty($user['active']) || !password_verify($password, (string) ($user['passwordHash'] ?? ''))) {
-            daluyan_update(static function (array &$store) use ($key, $recentAttempts): void {
-                $recentAttempts[] = time();
-                $store['loginAttempts'][$key] = $recentAttempts;
-            });
+            daluyan_record_login_attempt($key);
             daluyan_json(['error' => 'Email or password is incorrect.'], 401);
         }
-        daluyan_update(static function (array &$store) use ($key): void {
-            unset($store['loginAttempts'][$key]);
-        });
+        daluyan_clear_login_attempts($key);
         session_regenerate_id(true);
         $_SESSION['user'] = daluyan_safe_user($user);
         $_SESSION['csrf'] = bin2hex(random_bytes(32));
@@ -101,23 +90,11 @@ try {
         if (!daluyan_user_can($user, 'dtn.submit_any') && !daluyan_user_has_assignment($user, $committee)) {
             daluyan_json(['error' => 'You may submit requests only for your assigned committee.'], 403);
         }
-        $result = daluyan_update(static function (array &$data) use ($user, $subject, $committee, $requesterEmail, $description): array {
-            $number = (int) ($data['nextDtnNumber'] ?? 1);
-            $data['nextDtnNumber'] = $number + 1;
-            $record = [
-                'id' => daluyan_uuid(),
-                'code' => sprintf('SSC-UIM-%s-%04d', gmdate('Y'), $number),
-                'subject' => $subject,
-                'committee' => $committee,
-                'requesterEmail' => $requesterEmail,
-                'description' => $description,
-                'submittedBy' => $user['email'],
-                'status' => 'submitted',
-                'createdAt' => gmdate(DATE_ATOM)
-            ];
-            $data['dtnRequests'][] = $record;
-            return $record;
-        });
+        try {
+            $result = daluyan_create_dtn_request($user, $subject, $committee, $requesterEmail, $description);
+        } catch (DomainException $error) {
+            daluyan_json(['error' => $error->getMessage()], 422);
+        }
         daluyan_json(['request' => $result], 201);
     }
 
@@ -133,50 +110,14 @@ try {
         if (strcasecmp($officerEmail, $user['email']) !== 0 && !daluyan_user_can($user, 'attendance.submit_any')) {
             daluyan_json(['error' => 'Officers may log attendance only for their own account.'], 403);
         }
-        $data = daluyan_read();
-        $officer = null;
-        foreach ($data['directory'] as $entry) {
-            if (strcasecmp((string) ($entry['email'] ?? ''), $officerEmail) === 0) {
-                $officer = $entry;
-                break;
-            }
-        }
+        $officer = daluyan_find_user_by_email($officerEmail);
         if ($officer === null) {
             daluyan_json(['error' => 'Officer was not found in the council directory.'], 422);
         }
-        $result = daluyan_update(static function (array &$store) use ($user, $officer, $officerEmail, $event, $venue, $status): array {
-            $now = gmdate(DATE_ATOM);
-            if ($status === 'check_out') {
-                for ($index = count($store['attendance']) - 1; $index >= 0; $index--) {
-                    $record = &$store['attendance'][$index];
-                    if (strcasecmp((string) $record['officerEmail'], $officerEmail) === 0 && ($record['status'] ?? '') === 'checked_in' && empty($record['checkOutAt'])) {
-                        $record['checkOutAt'] = $now;
-                        $record['status'] = 'complete';
-                        $record['hours'] = round(max(0, (strtotime($now) - strtotime($record['checkInAt'])) / 3600), 2);
-                        $record['checkedOutBy'] = $user['email'];
-                        return $record;
-                    }
-                }
-                return ['error' => 'No open check-in was found for this officer.'];
-            }
-            $record = [
-                'id' => daluyan_uuid(),
-                'officerName' => $officer['name'],
-                'officerEmail' => $officerEmail,
-                'committee' => $officer['category'],
-                'event' => $event,
-                'venue' => $venue,
-                'status' => $status === 'check_in' ? 'checked_in' : 'on_call',
-                'checkInAt' => $now,
-                'checkOutAt' => null,
-                'hours' => 0.0,
-                'loggedBy' => $user['email']
-            ];
-            $store['attendance'][] = $record;
-            return $record;
-        });
-        if (isset($result['error'])) {
-            daluyan_json(['error' => $result['error']], 422);
+        try {
+            $result = daluyan_record_attendance($user, $officer, $event, $venue, $status);
+        } catch (DomainException $error) {
+            daluyan_json(['error' => $error->getMessage()], 422);
         }
         daluyan_json(['attendance' => $result], 201);
     }
@@ -199,20 +140,12 @@ try {
         if (!daluyan_user_can($user, 'leave.submit_any') && !daluyan_user_has_assignment($user, $committee)) {
             daluyan_json(['error' => 'You may file leave only for your assigned committee.'], 403);
         }
-        $request = [
-            'id' => daluyan_uuid(),
-            'officerEmail' => $officerEmail,
-            'committee' => $committee,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-            'reason' => $reason,
-            'submittedBy' => $user['email'],
-            'status' => 'pending',
-            'createdAt' => gmdate(DATE_ATOM)
-        ];
-        daluyan_update(static function (array &$data) use ($request): void {
-            $data['leaveRequests'][] = $request;
-        });
+        $officer = daluyan_find_user_by_email($officerEmail);
+        if ($officer === null) {
+            daluyan_json(['error' => 'Officer was not found in the council account list.'], 422);
+        }
+        $committeeKey = $committee === 'Higher Executives' ? 'Executives' : $committee;
+        $request = daluyan_create_leave_request($user, $officer, $committeeKey, $startDate, $endDate, $reason);
         daluyan_json(['request' => $request], 201);
     }
 
