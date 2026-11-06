@@ -158,7 +158,7 @@
       passwordToggle.innerHTML = `<i class="fa-regular ${isVisible ? 'fa-eye' : 'fa-eye-slash'}" aria-hidden="true"></i>`;
     });
 
-    loginForm.addEventListener('submit', event => {
+    loginForm.addEventListener('submit', async event => {
       event.preventDefault();
       const emailError = document.getElementById('email-error');
       const passwordError = document.getElementById('password-error');

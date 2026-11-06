@@ -250,7 +250,10 @@
 
     async function loadReport() {
       try {
-        const { stats } = await apiRequest('dashboard');
+        const requestedDays = Number.parseInt(new URLSearchParams(window.location.search).get('days') || '7', 10);
+        const days = Number.isFinite(requestedDays) ? Math.min(365, Math.max(1, requestedDays)) : 7;
+        const { stats } = await apiRequest('dashboard', null, `&days=${days}`);
+        document.querySelector('#modal-body .glass-card span').textContent = `Live database · Rolling ${days} days`;
         document.getElementById('report-hours').textContent = `${Number(stats.dutyHours).toFixed(2)} hrs logged`;
         const rows = stats.byCommittee.map(item => `<tr><td class="p-3">${escapeHtml(item.committee)}</td><td class="p-3">${item.officers}</td><td class="p-3 font-mono">${Number(item.hours).toFixed(2)} hrs</td><td class="p-3">${item.entries}</td></tr>`).join('');
         document.getElementById('report-rows').innerHTML = rows || '<tr><td class="p-3 text-slate-400" colspan="4">No attendance records in the last seven days.</td></tr>';

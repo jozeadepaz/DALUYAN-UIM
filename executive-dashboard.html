@@ -172,6 +172,8 @@
     async function loadStats() {
       const days = Number(reportPeriod.value);
       const { stats } = await dashboardRequest('dashboard', {}, `&days=${days}`);
+      const reportLink = document.querySelector('a[href^="mechanism-tools.html?tool=report"]');
+      reportLink.href = `mechanism-tools.html?tool=report&days=${days}`;
       document.getElementById('live-attendance').textContent = stats.attendanceEntries;
       document.getElementById('live-officers').textContent = stats.activeOfficers;
       document.getElementById('live-hours').textContent = Number(stats.dutyHours).toFixed(2);

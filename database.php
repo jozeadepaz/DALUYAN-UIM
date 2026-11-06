@@ -18,12 +18,46 @@ function daluyan_initial_data(): array
 {
     $seedPath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'seed.json';
     $directory = is_file($seedPath) ? json_decode((string) file_get_contents($seedPath), true) : [];
-    if (!is_array($directory)) {
-        throw new RuntimeException('The directory seed file is invalid JSON.');
+    $rolesPath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'roles.json';
+    $roles = is_file($rolesPath) ? json_decode((string) file_get_contents($rolesPath), true) : null;
+    if (!is_array($directory) || !is_array($roles)) {
+        throw new RuntimeException('A database seed file contains invalid JSON.');
     }
 
+    $users = [];
+    foreach ($directory as $person) {
+        $role = ($person['category'] ?? '') === 'Executives' ? 'executive' : 'officer';
+        $assignments = [$person['category'] ?? 'Unassigned'];
+        if (in_array($person['email'] ?? '', ['24-73629@g.batstate-u.edu.ph', '25-70913@g.batstate-u.edu.ph', '24-74935@g.batstate-u.edu.ph'], true)) {
+            $assignments[] = 'CommFIMA';
+        }
+        if (($person['email'] ?? '') === '23-74736@g.batstate-u.edu.ph') {
+            $assignments[] = 'CommCREL';
+        }
+        $users[] = [
+            'id' => (string) $person['id'],
+            'name' => $person['name'],
+            'email' => strtolower($person['email']),
+            'role' => $role,
+            'position' => $person['role'],
+            'assignments' => array_values(array_unique($assignments)),
+            'active' => false
+        ];
+    }
+    $users[] = [
+        'id' => 'adviser-dyemnah-bentir',
+        'name' => 'Dr. Dyemnah Inasiah P. Bentir',
+        'email' => 'dyemnahinasiah.bentir@g.batstate-u.edu.ph',
+        'role' => 'adviser',
+        'position' => 'SSC Faculty Adviser',
+        'assignments' => ['Adviser'],
+        'active' => false
+    ];
+
     return [
-        'users' => [],
+        'schemaVersion' => 4,
+        'users' => $users,
+        'roles' => $roles,
         'directory' => $directory,
         'attendance' => [],
         'dtnRequests' => [],
@@ -34,11 +68,39 @@ function daluyan_initial_data(): array
 
 function daluyan_normalize_data(array $data): array
 {
-    foreach (['users', 'directory', 'attendance', 'dtnRequests', 'leaveRequests', 'loginAttempts'] as $key) {
+    $initial = null;
+    foreach (['users', 'roles', 'directory', 'attendance', 'dtnRequests', 'leaveRequests', 'loginAttempts'] as $key) {
         if (!isset($data[$key]) || !is_array($data[$key])) {
-            $data[$key] = [];
+            if ($key === 'roles') {
+                $initial ??= daluyan_initial_data();
+                $data[$key] = $initial['roles'];
+            } else {
+                $data[$key] = [];
+            }
         }
     }
+    $schemaVersion = (int) ($data['schemaVersion'] ?? 0);
+    if ($schemaVersion < 2 && $data['users'] === []) {
+        $initial ??= daluyan_initial_data();
+        $data['users'] = $initial['users'];
+    }
+    if ($schemaVersion < 3) {
+        $initial ??= daluyan_initial_data();
+        $data['roles'] = $initial['roles'];
+    }
+    if ($schemaVersion < 4) {
+        foreach ($data['users'] as &$user) {
+            $user['assignments'] = is_array($user['assignments'] ?? null) ? $user['assignments'] : [];
+            if (in_array($user['email'] ?? '', ['24-73629@g.batstate-u.edu.ph', '25-70913@g.batstate-u.edu.ph', '24-74935@g.batstate-u.edu.ph'], true) && !in_array('CommFIMA', $user['assignments'], true)) {
+                $user['assignments'][] = 'CommFIMA';
+            }
+            if (($user['email'] ?? '') === '23-74736@g.batstate-u.edu.ph' && !in_array('CommCREL', $user['assignments'], true)) {
+                $user['assignments'][] = 'CommCREL';
+            }
+        }
+        unset($user);
+    }
+    $data['schemaVersion'] = 4;
     return $data;
 }
 
@@ -132,7 +194,9 @@ function daluyan_safe_user(array $user): array
         'id' => $user['id'],
         'name' => $user['name'],
         'email' => $user['email'],
-        'role' => $user['role']
+        'role' => $user['role'],
+        'position' => $user['position'] ?? '',
+        'assignments' => is_array($user['assignments'] ?? null) ? $user['assignments'] : []
     ];
 }
 
@@ -177,6 +241,30 @@ function daluyan_require_user(array $roles = ['adviser', 'executive', 'officer']
     $user = daluyan_current_user();
     if ($user === null || !in_array($user['role'] ?? '', $roles, true)) {
         daluyan_json(['error' => 'Authentication required.'], 401);
+    }
+    return $user;
+}
+
+function daluyan_user_can(array $user, string $permission): bool
+{
+    $data = daluyan_read();
+    $role = $data['roles'][$user['role'] ?? ''] ?? null;
+    return is_array($role) && in_array($permission, $role['permissions'] ?? [], true);
+}
+
+function daluyan_user_has_assignment(array $user, string $committee): bool
+{
+    return in_array($committee, $user['assignments'] ?? [], true);
+}
+
+function daluyan_require_permission(string $permission): array
+{
+    $user = daluyan_current_user();
+    if ($user === null) {
+        daluyan_json(['error' => 'Authentication required.'], 401);
+    }
+    if (!daluyan_user_can($user, $permission)) {
+        daluyan_json(['error' => 'You do not have permission to perform this action.'], 403);
     }
     return $user;
 }

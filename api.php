@@ -21,7 +21,7 @@ try {
             daluyan_json(['officers' => $data['directory']]);
         }
         if ($action === 'dashboard') {
-            daluyan_require_user(['adviser', 'executive']);
+            daluyan_require_permission('reports.view_all');
             $days = filter_var($_GET['days'] ?? 7, FILTER_VALIDATE_INT);
             daluyan_json(['stats' => daluyan_dashboard_stats(daluyan_read(), is_int($days) ? $days : 7)]);
         }
@@ -73,7 +73,8 @@ try {
         $_SESSION = [];
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000, [
+            setcookie(session_name(), '', [
+                'expires' => time() - 42000,
                 'path' => $params['path'],
                 'domain' => $params['domain'],
                 'secure' => $params['secure'],
@@ -86,7 +87,7 @@ try {
     }
 
     if ($action === 'dtn') {
-        $user = daluyan_require_user();
+        $user = daluyan_require_permission('dtn.submit_self');
         $subject = daluyan_required_string($body, 'subject', 200);
         $committee = daluyan_required_string($body, 'committee', 40);
         $requesterEmail = strtolower(daluyan_required_string($body, 'email', 254));
@@ -94,8 +95,11 @@ try {
         if (!filter_var($requesterEmail, FILTER_VALIDATE_EMAIL) || !str_ends_with($requesterEmail, '@g.batstate-u.edu.ph') || !in_array($committee, ['CommAIRS', 'CommCREL', 'CommFIMA', 'CommPROL'], true)) {
             daluyan_json(['error' => 'Enter a valid university requesting email.'], 422);
         }
-        if ($user['role'] === 'officer' && strcasecmp($requesterEmail, $user['email']) !== 0) {
+        if (strcasecmp($requesterEmail, $user['email']) !== 0 && !daluyan_user_can($user, 'dtn.submit_any')) {
             daluyan_json(['error' => 'Officers may submit requests only for their own account.'], 403);
+        }
+        if (!daluyan_user_can($user, 'dtn.submit_any') && !daluyan_user_has_assignment($user, $committee)) {
+            daluyan_json(['error' => 'You may submit requests only for your assigned committee.'], 403);
         }
         $result = daluyan_update(static function (array &$data) use ($user, $subject, $committee, $requesterEmail, $description): array {
             $number = (int) ($data['nextDtnNumber'] ?? 1);
@@ -118,7 +122,7 @@ try {
     }
 
     if ($action === 'duty') {
-        $user = daluyan_require_user();
+        $user = daluyan_require_permission('attendance.submit_self');
         $officerEmail = strtolower(daluyan_required_string($body, 'officerEmail', 254));
         $event = daluyan_required_string($body, 'event', 200);
         $venue = daluyan_required_string($body, 'venue', 200);
@@ -126,7 +130,7 @@ try {
         if (!filter_var($officerEmail, FILTER_VALIDATE_EMAIL) || !in_array($status, ['check_in', 'check_out', 'on_call'], true)) {
             daluyan_json(['error' => 'Officer or duty status is invalid.'], 422);
         }
-        if ($user['role'] === 'officer' && strcasecmp($officerEmail, $user['email']) !== 0) {
+        if (strcasecmp($officerEmail, $user['email']) !== 0 && !daluyan_user_can($user, 'attendance.submit_any')) {
             daluyan_json(['error' => 'Officers may log attendance only for their own account.'], 403);
         }
         $data = daluyan_read();
@@ -178,7 +182,7 @@ try {
     }
 
     if ($action === 'leave') {
-        $user = daluyan_require_user();
+        $user = daluyan_require_permission('leave.submit_self');
         $officerEmail = strtolower(daluyan_required_string($body, 'email', 254));
         $committee = daluyan_required_string($body, 'committee', 40);
         $startDate = daluyan_required_string($body, 'start', 10);
@@ -189,8 +193,11 @@ try {
         if (!filter_var($officerEmail, FILTER_VALIDATE_EMAIL) || !str_ends_with($officerEmail, '@g.batstate-u.edu.ph') || !in_array($committee, ['CommAIRS', 'CommCREL', 'CommFIMA', 'CommPROL', 'Higher Executives'], true) || !$validStartDate || !$validEndDate || $startDate > $endDate) {
             daluyan_json(['error' => 'Email or leave dates are invalid.'], 422);
         }
-        if ($user['role'] === 'officer' && strcasecmp($officerEmail, $user['email']) !== 0) {
+        if (strcasecmp($officerEmail, $user['email']) !== 0 && !daluyan_user_can($user, 'leave.submit_any')) {
             daluyan_json(['error' => 'Officers may file leave only for their own account.'], 403);
+        }
+        if (!daluyan_user_can($user, 'leave.submit_any') && !daluyan_user_has_assignment($user, $committee)) {
+            daluyan_json(['error' => 'You may file leave only for your assigned committee.'], 403);
         }
         $request = [
             'id' => daluyan_uuid(),

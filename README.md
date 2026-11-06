@@ -15,7 +15,7 @@ Then visit `http://127.0.0.1:8000/`. The PHP development server is for local tes
 
 ## Data Store
 
-The JSON store is created on first API request at `../daluyan-private/database.json`, outside the project web root. The council directory is initialized from `data/seed.json`; attendance, DTN requests, leave requests, and accounts start empty. Set `DALUYAN_DATA_FILE` on the server to choose another private path. Keep backups of this file and restrict its filesystem permissions.
+The JSON store is created on first API request at `../daluyan-private/database.json`, outside the project web root. The council directory is initialized from `data/seed.json`; role definitions come from `data/roles.json`; and pending account records are seeded from the document roster. Password hashes, attendance, DTN requests, and leave requests start empty. Set `DALUYAN_DATA_FILE` on the server to choose another private path. Keep backups of this file and restrict its filesystem permissions.
 
 The file store uses OS file locks and is intended for a small, single-server council portal. It is not a replacement for a transactional database under substantial concurrent use; migrate to PostgreSQL/MySQL if the workload grows.
 
@@ -23,7 +23,7 @@ The dashboard keeps the original Week 8 numbers under “Sample report reference
 
 ## User Accounts
 
-There are no default users or passwords. Provision accounts from a trusted server terminal. Roles are `adviser`, `executive`, and `officer`; only the first two can access the executive dashboard. Any active role can use mechanism forms. Accounts must use a `@g.batstate-u.edu.ph` email address.
+The document roster creates pending accounts for the adviser, three higher executives, and the listed committee officers. No account is active until an administrator sets its password. All accounts use their document-listed `@g.batstate-u.edu.ph` email. The `adviser` and `executive` roles can view all-committee dashboard reports and submit records for other officers; the `officer` role can submit only for its own account and assigned committee and cannot access the executive dashboard. Facilitating officer/head/member titles and committee assignments are retained on each user record; those titles do not grant broader permissions unless the role policy is deliberately changed.
 
 Set the password in the environment rather than putting it in the command line. In PowerShell:
 
@@ -31,12 +31,12 @@ Set the password in the environment rather than putting it in the command line. 
 $secure = Read-Host "Account password" -AsSecureString
 $pointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
 $env:DALUYAN_USER_PASSWORD = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($pointer)
-php manage-user.php add "24-71097@g.batstate-u.edu.ph" "Officer Name" executive
+php manage-user.php set-password "24-71097@g.batstate-u.edu.ph"
 Remove-Item Env:DALUYAN_USER_PASSWORD
 [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pointer)
 ```
 
-Use role `adviser` for the adviser account and `executive` for executive accounts. Passwords must be 12-72 bytes. To reset an existing password, run `manage-user.php reset-password <email>` with `DALUYAN_USER_PASSWORD` set. To revoke access, run `manage-user.php disable <email>`.
+Repeat the secure PowerShell prompt for each pending account. Passwords must be 12-72 bytes. `set-password` activates a document-seeded account without changing its role. To reset an existing password, run `manage-user.php reset-password <email>` with `DALUYAN_USER_PASSWORD` set. To add a new account not listed in the document, use `manage-user.php add <email> <name> <adviser|executive|officer>`. To revoke access, run `manage-user.php disable <email>`.
 
 ## API Coverage
 
@@ -49,6 +49,6 @@ Use role `adviser` for the adviser account and `executive` for executive account
 
 ## Current Limitations
 
-- This workspace does not include PHP, so the PHP runtime checks could not be run here. Verify with `php -l api.php`, `php -l database.php`, `php -l manage-user.php`, and `php -l router.php` after installing PHP.
+- PHP 8.4.27 syntax checks passed for the API, database helper, router, root entry point, and account manager. An isolated PHP-server test verified seeded-account activation, officer dashboard denial, self-only attendance, executive dashboard access, DTN/leave persistence, and logout.
 - Account provisioning is CLI-only; there is no password-reset email or admin UI.
 - Attendance is based on server timestamps. Compliance needs a configured schedule or expected-duty model before it can be calculated accurately.

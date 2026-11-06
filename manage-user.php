@@ -18,12 +18,13 @@ function usage(): never
 {
     fwrite(STDERR, "Usage:\n");
     fwrite(STDERR, "  DALUYAN_USER_PASSWORD=<password> php manage-user.php add <email> <name> <adviser|executive|officer>\n");
+    fwrite(STDERR, "  DALUYAN_USER_PASSWORD=<password> php manage-user.php set-password <seeded-email>\n");
     fwrite(STDERR, "  DALUYAN_USER_PASSWORD=<password> php manage-user.php reset-password <email>\n");
     fwrite(STDERR, "  php manage-user.php disable <email>\n");
     exit(2);
 }
 
-if (!in_array($command, ['add', 'reset-password', 'disable'], true) || !filter_var($email, FILTER_VALIDATE_EMAIL) || !str_ends_with($email, '@g.batstate-u.edu.ph')) {
+if (!in_array($command, ['add', 'set-password', 'reset-password', 'disable'], true) || !filter_var($email, FILTER_VALIDATE_EMAIL) || !str_ends_with($email, '@g.batstate-u.edu.ph')) {
     usage();
 }
 
@@ -64,14 +65,18 @@ try {
                     unset($user);
                     return 'exists';
                 }
+                if ($command === 'set-password' && !empty($user['passwordHash'])) {
+                    unset($user);
+                    return 'already_active';
+                }
                 $user['passwordHash'] = password_hash($password, PASSWORD_DEFAULT);
                 $user['active'] = true;
                 unset($user);
-                return 'updated';
+                return $command === 'set-password' ? 'activated' : 'updated';
             }
         }
         unset($user);
-        if ($command === 'reset-password') {
+        if ($command !== 'add') {
             return 'missing';
         }
         $data['users'][] = [
@@ -94,7 +99,12 @@ try {
         fwrite(STDERR, "Account not found.\n");
         exit(1);
     }
-    fwrite(STDOUT, $result === 'created' ? "Account created.\n" : "Password reset.\n");
+    if ($result === 'already_active') {
+        fwrite(STDERR, "Account already has credentials; use reset-password if needed.\n");
+        exit(1);
+    }
+    $messages = ['created' => 'Account created.', 'activated' => 'Seeded account activated.', 'updated' => 'Password reset.'];
+    fwrite(STDOUT, ($messages[$result] ?? 'Account updated.') . "\n");
 } catch (Throwable $error) {
     fwrite(STDERR, "User management failed: " . $error->getMessage() . "\n");
     exit(1);
