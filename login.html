@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#060a12">
+  <title>Sign In | DALUYAN SSC-UIM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brandCyan: '#55CFF5',
+            brandTeal: '#0088B3',
+            brandOrange: '#FF6F32',
+            brandAmber: '#EEA61C',
+            darkBase: '#060a12',
+            darkSurface: '#0b1322'
+          },
+          fontFamily: { poppins: ['Poppins', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: #060a12; color: #f3f4f6; }
+    .login-backdrop {
+      background-color: #060a12;
+      background-image: linear-gradient(rgba(85,207,245,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(85,207,245,.035) 1px, transparent 1px);
+      background-size: 44px 44px;
+    }
+    .login-panel { background: rgba(11,19,34,.88); border: 1px solid rgba(255,255,255,.13); box-shadow: 0 24px 70px rgba(0,0,0,.4); backdrop-filter: blur(18px); }
+    .field { background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.16); color: #f8fafc; }
+    .field:focus { outline: 2px solid rgba(85,207,245,.75); outline-offset: 2px; border-color: transparent; }
+    .brand-wordmark { background: linear-gradient(120deg,#55CFF5 0%,#FF6F32 58%,#EEA61C 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .submit-button { background: linear-gradient(110deg,#0088B3,#55CFF5); color: #06121a; }
+    .submit-button:hover { filter: brightness(1.08); }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body class="min-h-screen antialiased">
+  <main class="login-backdrop min-h-screen flex flex-col">
+    <header class="px-5 sm:px-8 py-5">
+      <a href="DALUYAN-UIM.html" class="inline-flex items-center gap-3" aria-label="Return to DALUYAN portal">
+        <span class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brandCyan via-brandOrange to-brandAmber p-[2px]">
+          <span class="w-full h-full rounded-[10px] bg-darkBase flex items-center justify-center text-brandCyan"><i class="fa-solid fa-shield-halved"></i></span>
+        </span>
+        <span>
+          <span class="block text-xl font-extrabold tracking-tight brand-wordmark">DALUYAN <span class="text-xs text-brandCyan">SSC-UIM</span></span>
+          <span class="block text-[10px] text-slate-400">BatStateU ARASOF-Nasugbu</span>
+        </span>
+      </a>
+    </header>
+
+    <section class="flex-1 px-5 sm:px-8 py-8 sm:py-12 flex items-center justify-center">
+      <div class="w-full max-w-5xl grid lg:grid-cols-[1fr_0.85fr] overflow-hidden rounded-2xl login-panel">
+        <div class="hidden lg:flex flex-col justify-between p-10 xl:p-14 border-r border-white/10 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-brandCyan via-brandOrange to-brandAmber"></div>
+          <div class="relative">
+            <p class="text-[11px] uppercase tracking-[0.18em] text-brandCyan font-semibold">Supreme Student Council - ARASOF-Nasugbu</p>
+            <h1 class="mt-5 text-4xl xl:text-5xl leading-tight font-extrabold">A clearer channel for council work.</h1>
+            <p class="mt-5 max-w-md text-sm leading-7 text-slate-400">Unified Internal Mechanism for Batangas State University, ARASOF-Nasugbu Campus.</p>
+          </div>
+          <div class="relative flex items-center gap-3 text-xs text-slate-400">
+            <span class="w-9 h-9 rounded-lg border border-brandCyan/30 bg-brandCyan/10 text-brandCyan flex items-center justify-center"><i class="fa-solid fa-landmark"></i></span>
+            <span>R. Martinez St. Bucana, Nasugbu, Batangas</span>
+          </div>
+        </div>
+
+        <div class="p-6 sm:p-10 xl:p-12">
+          <div class="mb-8">
+            <p class="text-xs uppercase tracking-[0.16em] font-semibold text-brandOrange">SSC-UIM Access</p>
+            <h2 class="mt-2 text-2xl sm:text-3xl font-bold">Sign in</h2>
+            <p class="mt-2 text-sm text-slate-400">Use your university account credentials.</p>
+          </div>
+
+          <form id="login-form" class="space-y-5" novalidate>
+            <div>
+              <label for="email" class="block mb-2 text-xs font-medium text-slate-300">University email</label>
+              <div class="relative">
+                <i class="fa-regular fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm" aria-hidden="true"></i>
+                <input id="email" name="email" type="email" autocomplete="username" required placeholder="name@g.batstate-u.edu.ph" class="field w-full rounded-lg pl-11 pr-4 py-3 text-sm placeholder:text-slate-600">
+              </div>
+              <p id="email-error" class="hidden mt-2 text-xs text-rose-300" role="alert">Enter a valid university email address.</p>
+            </div>
+
+            <div>
+              <div class="mb-2 flex items-center justify-between gap-3">
+                <label for="password" class="text-xs font-medium text-slate-300">Password</label>
+              </div>
+              <div class="relative">
+                <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm" aria-hidden="true"></i>
+                <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Enter your password" class="field w-full rounded-lg pl-11 pr-12 py-3 text-sm placeholder:text-slate-600">
+                <button id="password-toggle" type="button" class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-md text-slate-400 hover:text-white hover:bg-white/5" aria-label="Show password" aria-pressed="false" title="Show password">
+                  <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                </button>
+              </div>
+              <p id="password-error" class="hidden mt-2 text-xs text-rose-300" role="alert">Enter your password.</p>
+            </div>
+
+            <label class="inline-flex items-center gap-2.5 text-xs text-slate-400 cursor-pointer">
+              <input id="remember" name="remember" type="checkbox" class="w-4 h-4 rounded border-white/20 bg-white/5 text-brandCyan focus:ring-brandCyan">
+              Remember me on this device
+            </label>
+
+            <button type="submit" class="submit-button w-full rounded-lg py-3 text-sm font-bold transition">Sign In <i class="fa-solid fa-arrow-right ml-2" aria-hidden="true"></i></button>
+            <p id="login-status" class="hidden rounded-lg border border-brandAmber/30 bg-brandAmber/10 px-4 py-3 text-xs leading-relaxed text-amber-100" role="status" aria-live="polite"></p>
+          </form>
+
+          <div class="mt-8 pt-5 border-t border-white/10 flex items-center justify-between gap-4 text-xs">
+            <a href="DALUYAN-UIM.html" class="text-slate-400 hover:text-brandCyan transition-colors"><i class="fa-solid fa-arrow-left mr-2" aria-hidden="true"></i>DALUYAN</a>
+            <span class="text-slate-600">Secure SSC-UIM access</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="px-5 sm:px-8 pb-5 text-center text-[10px] text-slate-600">© 2026 Supreme Student Council - ARASOF-Nasugbu (SSC-UIM)</footer>
+  </main>
+
+  <script>
+    const loginForm = document.getElementById('login-form');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const passwordToggle = document.getElementById('password-toggle');
+    let csrfToken = '';
+
+    async function initializeSession() {
+      const status = document.getElementById('login-status');
+      try {
+        const response = await fetch('api.php?action=session', { credentials: 'same-origin' });
+        if (!response.ok) throw new Error('The sign-in service is unavailable.');
+        const data = await response.json();
+        csrfToken = data.csrf;
+        if (data.user) {
+          window.location.replace(data.user.role === 'adviser' || data.user.role === 'executive' ? 'executive-dashboard.html' : 'mechanism-tools.html');
+        }
+      } catch {
+        status.textContent = 'Open DALUYAN through its PHP server to sign in.';
+        status.classList.remove('hidden');
+      }
+    }
+    initializeSession();
+
+    passwordToggle.addEventListener('click', () => {
+      const isVisible = passwordInput.type === 'text';
+      passwordInput.type = isVisible ? 'password' : 'text';
+      passwordToggle.setAttribute('aria-pressed', String(!isVisible));
+      passwordToggle.setAttribute('aria-label', isVisible ? 'Show password' : 'Hide password');
+      passwordToggle.title = isVisible ? 'Show password' : 'Hide password';
+      passwordToggle.innerHTML = `<i class="fa-regular ${isVisible ? 'fa-eye' : 'fa-eye-slash'}" aria-hidden="true"></i>`;
+    });
+
+    loginForm.addEventListener('submit', event => {
+      event.preventDefault();
+      const emailError = document.getElementById('email-error');
+      const passwordError = document.getElementById('password-error');
+      const status = document.getElementById('login-status');
+      const validEmail = /^[^\s@]+@g\.batstate-u\.edu\.ph$/i.test(emailInput.value.trim());
+      const hasPassword = passwordInput.value.length > 0;
+
+      emailError.classList.toggle('hidden', validEmail);
+      passwordError.classList.toggle('hidden', hasPassword);
+      emailInput.setAttribute('aria-invalid', String(!validEmail));
+      passwordInput.setAttribute('aria-invalid', String(!hasPassword));
+      status.classList.add('hidden');
+
+      if (!validEmail || !hasPassword) {
+        (!validEmail ? emailInput : passwordInput).focus();
+        return;
+      }
+
+      if (!csrfToken) {
+        status.textContent = 'The sign-in service is unavailable. Open DALUYAN through its PHP server.';
+        status.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const response = await fetch('api.php?action=login', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+          body: JSON.stringify({ email: emailInput.value.trim(), password: passwordInput.value })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Unable to sign in.');
+        window.location.replace(data.user.role === 'adviser' || data.user.role === 'executive' ? 'executive-dashboard.html' : 'mechanism-tools.html');
+      } catch (error) {
+        status.textContent = error.message || 'The sign-in service is unavailable.';
+        status.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#060a12">
+  <title>Executive Dashboard | DALUYAN SSC-UIM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brandCyan: '#55CFF5',
+            brandTeal: '#0088B3',
+            brandOrange: '#FF6F32',
+            brandAmber: '#EEA61C',
+            darkBase: '#060a12',
+            darkSurface: '#0b1322'
+          },
+          fontFamily: { poppins: ['Poppins', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: #060a12; color: #f3f4f6; }
+    .dashboard-surface { background: linear-gradient(135deg, rgba(85,207,245,.07), transparent 46%), #060a12; }
+    .panel { background: rgba(15,23,42,.66); border: 1px solid rgba(255,255,255,.11); backdrop-filter: blur(14px); }
+    .data-bar { height: 7px; background: rgba(255,255,255,.08); overflow: hidden; border-radius: 999px; }
+    .data-bar > span { display: block; height: 100%; border-radius: inherit; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body class="min-h-screen antialiased">
+  <div class="dashboard-surface min-h-screen">
+    <header class="sticky top-0 z-30 border-b border-white/10 bg-darkBase/90 backdrop-blur-md">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-4">
+        <a href="DALUYAN-UIM.html" class="flex items-center gap-3" aria-label="DALUYAN portal">
+          <span class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brandCyan via-brandOrange to-brandAmber p-[2px]"><span class="w-full h-full rounded-[10px] bg-darkBase flex items-center justify-center text-brandCyan"><i class="fa-solid fa-shield-halved"></i></span></span>
+          <span><span class="block font-extrabold tracking-wide">DALUYAN <span class="text-brandCyan text-xs">SSC-UIM</span></span><span class="block text-[10px] text-slate-400">Executive Dashboard</span></span>
+        </a>
+        <div class="flex items-center gap-3 text-xs">
+          <span class="hidden sm:inline-flex items-center gap-2 rounded-full border border-brandAmber/30 bg-brandAmber/10 px-3 py-1.5 text-brandAmber"><i class="fa-solid fa-user-shield"></i> Adviser & Executive View</span>
+          <a href="DALUYAN-UIM.html" class="rounded-lg border border-white/15 px-3 py-2 text-slate-300 hover:text-white hover:border-brandCyan/50 transition-colors"><i class="fa-solid fa-arrow-left mr-2"></i><span class="hidden sm:inline">Portal</span><span class="sm:hidden">Back</span></a>
+          <button id="sign-out" type="button" class="rounded-lg border border-white/15 px-3 py-2 text-slate-300 hover:text-white transition-colors">Sign Out</button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-10 space-y-8">
+      <section class="flex flex-col lg:flex-row lg:items-end justify-between gap-5">
+        <div>
+          <p class="text-[11px] uppercase tracking-[0.18em] font-semibold text-brandCyan">Council Operations</p>
+          <h1 class="mt-2 text-3xl sm:text-4xl font-bold">Attendance Overview</h1>
+          <p class="mt-2 text-sm text-slate-400">Weekly officer participation across SSC-UIM committees.</p>
+        </div>
+        <div class="flex items-center gap-3 text-xs">
+          <label for="report-period" class="text-slate-400">Reporting period</label>
+          <select id="report-period" class="rounded-lg border border-white/15 bg-darkSurface px-3 py-2 text-slate-200" aria-label="Reporting period">
+            <option value="7">Last 7 days</option>
+            <option value="30">Last 30 days</option>
+          </select>
+        </div>
+      </section>
+
+      <div class="flex gap-3 rounded-xl border border-brandAmber/25 bg-brandAmber/5 px-4 py-3 text-xs leading-relaxed text-amber-100/90" role="note">
+        <i class="fa-solid fa-circle-info mt-0.5 text-brandAmber" aria-hidden="true"></i>
+        <p><strong class="font-semibold">Live records.</strong> Summary values below come from the secured API. The sample report at the bottom is retained for reference and is not included in live totals.</p>
+      </div>
+
+      <section aria-label="Attendance summary" class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <article class="panel rounded-xl p-5">
+          <div class="flex items-center justify-between"><span class="text-xs text-slate-400">Attendance entries</span><i class="fa-solid fa-chart-line text-brandCyan"></i></div>
+          <p id="live-attendance" class="mt-4 text-3xl font-semibold">--</p>
+          <p class="mt-1 text-[11px] text-slate-500">Selected reporting period</p>
+        </article>
+        <article class="panel rounded-xl p-5">
+          <div class="flex items-center justify-between"><span class="text-xs text-slate-400">Active members</span><i class="fa-solid fa-users text-brandOrange"></i></div>
+          <p id="live-officers" class="mt-4 text-3xl font-semibold">--</p>
+          <p class="mt-1 text-[11px] text-slate-500">Officers with activity</p>
+        </article>
+        <article class="panel rounded-xl p-5">
+          <div class="flex items-center justify-between"><span class="text-xs text-slate-400">Duty hours logged</span><i class="fa-regular fa-clock text-brandAmber"></i></div>
+          <p class="mt-4 text-3xl font-semibold"><span id="live-hours">--</span><span class="ml-1 text-lg text-slate-400">hrs</span></p>
+          <p class="mt-1 text-[11px] text-slate-500">Completed shifts</p>
+        </article>
+        <article class="panel rounded-xl p-5">
+          <div class="flex items-center justify-between"><span class="text-xs text-slate-400">Pending leave requests</span><i class="fa-solid fa-file-circle-exclamation text-emerald-400"></i></div>
+          <p id="live-leaves" class="mt-4 text-3xl font-semibold">--</p>
+          <p class="mt-1 text-[11px] text-slate-500">Awaiting review</p>
+        </article>
+      </section>
+
+      <section class="grid lg:grid-cols-[1.25fr_.75fr] gap-5">
+        <article class="panel rounded-xl overflow-hidden">
+          <div class="px-5 py-4 border-b border-white/10 flex items-center justify-between gap-3">
+            <div><h2 class="text-sm font-semibold">Live committee attendance</h2><p class="mt-1 text-[11px] text-slate-500">Logged activity by committee</p></div>
+            <span id="period-label" class="text-[10px] text-slate-500">Last 7 days</span>
+          </div>
+          <div id="live-committee-rows" class="divide-y divide-white/5"><p class="px-5 py-6 text-xs text-slate-500">Loading live attendance...</p></div>
+        </article>
+
+        <article class="panel rounded-xl">
+          <div class="px-5 py-4 border-b border-white/10"><h2 class="text-sm font-semibold">Internal mechanism access</h2><p class="mt-1 text-[11px] text-slate-500">Launch a council workflow</p></div>
+          <div class="p-3 space-y-1">
+            <a href="mechanism-tools.html?tool=dtn" class="flex items-center gap-3 rounded-lg px-3 py-3 hover:bg-white/5 transition-colors group"><span class="w-8 h-8 rounded-lg bg-brandCyan/10 text-brandCyan flex items-center justify-center"><i class="fa-solid fa-hashtag"></i></span><span class="flex-1"><span class="block text-xs font-medium">DTN request</span><span class="block text-[10px] text-slate-500">Document tracking</span></span><i class="fa-solid fa-arrow-right text-[10px] text-slate-600 group-hover:text-brandCyan"></i></a>
+            <a href="mechanism-tools.html?tool=duty" class="flex items-center gap-3 rounded-lg px-3 py-3 hover:bg-white/5 transition-colors group"><span class="w-8 h-8 rounded-lg bg-brandOrange/10 text-brandOrange flex items-center justify-center"><i class="fa-solid fa-user-clock"></i></span><span class="flex-1"><span class="block text-xs font-medium">Event duty tracker</span><span class="block text-[10px] text-slate-500">Officer attendance</span></span><i class="fa-solid fa-arrow-right text-[10px] text-slate-600 group-hover:text-brandOrange"></i></a>
+            <a href="mechanism-tools.html?tool=leave" class="flex items-center gap-3 rounded-lg px-3 py-3 hover:bg-white/5 transition-colors group"><span class="w-8 h-8 rounded-lg bg-brandAmber/10 text-brandAmber flex items-center justify-center"><i class="fa-solid fa-file-signature"></i></span><span class="flex-1"><span class="block text-xs font-medium">Leave of absence</span><span class="block text-[10px] text-slate-500">Administrative application</span></span><i class="fa-solid fa-arrow-right text-[10px] text-slate-600 group-hover:text-brandAmber"></i></a>
+            <a href="mechanism-tools.html?tool=report" class="flex items-center gap-3 rounded-lg px-3 py-3 hover:bg-white/5 transition-colors group"><span class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center"><i class="fa-solid fa-chart-pie"></i></span><span class="flex-1"><span class="block text-xs font-medium">Attendance report</span><span class="block text-[10px] text-slate-500">Weekly compliance</span></span><i class="fa-solid fa-arrow-right text-[10px] text-slate-600 group-hover:text-emerald-400"></i></a>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel rounded-xl overflow-hidden">
+        <div class="px-5 py-4 border-b border-white/10"><h2 class="text-sm font-semibold">Recent records</h2><p class="mt-1 text-[11px] text-slate-500">Latest attendance, DTN, and leave activity</p></div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs min-w-[650px]">
+            <thead class="text-slate-500"><tr><th class="p-3">Type</th><th class="p-3">Officer / Reference</th><th class="p-3">Detail</th><th class="p-3">Committee</th><th class="p-3">Status</th><th class="p-3">Date</th></tr></thead>
+            <tbody id="recent-records" class="divide-y divide-white/5 text-slate-300"><tr><td class="p-3 text-slate-500" colspan="6">Loading records...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <details class="panel rounded-xl">
+        <summary class="cursor-pointer px-5 py-4 text-xs font-semibold text-slate-300">Sample report reference · demo data only</summary>
+        <div class="overflow-x-auto border-t border-white/10">
+          <table class="w-full text-left text-xs">
+            <thead class="text-slate-500"><tr><th class="p-3">Committee</th><th class="p-3">Demo duty hours</th><th class="p-3">Demo status</th></tr></thead>
+            <tbody class="divide-y divide-white/5 text-slate-300">
+              <tr><td class="p-3 text-brandCyan">CommAIRS</td><td class="p-3 font-mono">148.5 hrs</td><td class="p-3">Excellent</td></tr>
+              <tr><td class="p-3 text-brandTeal">CommCREL</td><td class="p-3 font-mono">162.0 hrs</td><td class="p-3">Excellent</td></tr>
+              <tr><td class="p-3 text-brandOrange">CommFIMA</td><td class="p-3 font-mono">134.0 hrs</td><td class="p-3">Optimal</td></tr>
+              <tr><td class="p-3 text-brandAmber">CommPROL</td><td class="p-3 font-mono">120.5 hrs</td><td class="p-3">Optimal</td></tr>
+            </tbody>
+          </table>
+          <p class="px-3 pb-3 text-[10px] text-slate-500">The 96.2% compliance value in the original sample report is also demo-only; live compliance requires defined attendance expectations.</p>
+        </div>
+      </details>
+    </main>
+
+    <footer class="max-w-7xl mx-auto px-4 sm:px-8 pb-6 w-full flex flex-col sm:flex-row justify-between gap-2 text-[10px] text-slate-600">
+      <span>Supreme Student Council - ARASOF-Nasugbu</span>
+      <span>Sample report values · Week 8</span>
+    </footer>
+  </div>
+  <script>
+    let csrfToken = '';
+    const reportPeriod = document.getElementById('report-period');
+
+    async function dashboardRequest(action, options = {}, query = '') {
+      const response = await fetch(`api.php?action=${encodeURIComponent(action)}${query}`, {
+        credentials: 'same-origin',
+        ...options,
+        headers: { ...(options.headers || {}), ...(options.method === 'POST' ? { 'X-CSRF-Token': csrfToken } : {}) }
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Unable to load dashboard data.');
+      return data;
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+    }
+
+    async function loadStats() {
+      const days = Number(reportPeriod.value);
+      const { stats } = await dashboardRequest('dashboard', {}, `&days=${days}`);
+      document.getElementById('live-attendance').textContent = stats.attendanceEntries;
+      document.getElementById('live-officers').textContent = stats.activeOfficers;
+      document.getElementById('live-hours').textContent = Number(stats.dutyHours).toFixed(2);
+      document.getElementById('live-leaves').textContent = stats.pendingLeaves;
+      document.getElementById('period-label').textContent = `Last ${days} days`;
+
+      const colors = { CommAIRS: 'brandCyan', CommCREL: 'brandTeal', CommFIMA: 'brandOrange', CommPROL: 'brandAmber' };
+      const rows = stats.byCommittee.map(item => {
+        const color = colors[item.committee] || 'brandCyan';
+        const hours = Number(item.hours);
+        const percent = stats.dutyHours > 0 ? Math.min(100, hours / stats.dutyHours * 100) : 0;
+        return `<div class="px-5 py-4 grid sm:grid-cols-[1fr_auto] gap-3 items-center"><div><div class="flex justify-between gap-4 text-xs"><span class="font-medium text-${color}">${escapeHtml(item.committee)}</span><span class="font-mono text-slate-300">${hours.toFixed(2)} hrs · ${item.officers} officers</span></div><div class="data-bar mt-2"><span class="bg-${color}" style="width:${percent}%"></span></div></div><span class="text-[10px] text-slate-400">${item.entries} entries</span></div>`;
+      }).join('');
+      document.getElementById('live-committee-rows').innerHTML = rows || '<p class="px-5 py-6 text-xs text-slate-500">No attendance records in this period.</p>';
+      const activityRows = stats.recentActivity.map(item => {
+        const date = new Date(item.createdAt);
+        const dateText = Number.isNaN(date.getTime()) ? '' : date.toLocaleString();
+        return `<tr><td class="p-3">${escapeHtml(item.type)}</td><td class="p-3">${escapeHtml(item.subject)}</td><td class="p-3">${escapeHtml(item.detail)}</td><td class="p-3">${escapeHtml(item.committee)}</td><td class="p-3">${escapeHtml(item.status)}</td><td class="p-3 whitespace-nowrap">${escapeHtml(dateText)}</td></tr>`;
+      }).join('');
+      document.getElementById('recent-records').innerHTML = activityRows || '<tr><td class="p-3 text-slate-500" colspan="6">No records have been submitted yet.</td></tr>';
+    }
+
+    async function initializeDashboard() {
+      try {
+        const session = await dashboardRequest('session');
+        if (!session.user) {
+          window.location.replace('login.html');
+          return;
+        }
+        if (!['adviser', 'executive'].includes(session.user.role)) {
+          window.location.replace('mechanism-tools.html');
+          return;
+        }
+        csrfToken = session.csrf;
+        await loadStats();
+      } catch (error) {
+        document.getElementById('live-committee-rows').innerHTML = `<p class="px-5 py-6 text-xs text-rose-300">${escapeHtml(error.message)} <a class="underline" href="login.html">Sign in</a></p>`;
+      }
+    }
+
+    reportPeriod.addEventListener('change', () => loadStats().catch(error => {
+      document.getElementById('live-committee-rows').innerHTML = `<p class="px-5 py-6 text-xs text-rose-300">${escapeHtml(error.message)}</p>`;
+    }));
+
+    document.getElementById('sign-out').addEventListener('click', async () => {
+      try {
+        await dashboardRequest('logout', { method: 'POST' });
+        window.location.replace('login.html');
+      } catch (error) {
+        document.getElementById('live-committee-rows').innerHTML = `<p class="px-5 py-6 text-xs text-rose-300">${escapeHtml(error.message)}</p>`;
+      }
+    });
+
+    initializeDashboard();
+  </script>
+</body>
+</html>

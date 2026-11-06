@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mechanism Tools | DALUYAN SSC-UIM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brandCyan: '#55CFF5',
+            brandTeal: '#0088B3',
+            brandOrange: '#FF6F32',
+            brandAmber: '#EEA61C',
+            darkBase: '#060a12',
+            darkSurface: '#0b1322'
+          },
+          fontFamily: { poppins: ['Poppins', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Poppins', sans-serif; background: #060a12; color: #f3f4f6; }
+    .glass-panel { background: rgba(15, 23, 42, .72); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 20px 50px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12); }
+    .glass-card { background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.12); transition: transform .2s ease, border-color .2s ease, background .2s ease; }
+    .glass-card:hover { transform: translateY(-3px); border-color: rgba(85,207,245,.5); background: rgba(255,255,255,.075); }
+    .glass-input { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.16); color: #fff; }
+    .glass-input option { background: #0b1322; color: #f3f4f6; }
+    .glass-input:focus { outline: 2px solid rgba(85,207,245,.65); outline-offset: 1px; }
+    .text-gradient-brand { background: linear-gradient(135deg,#55CFF5 0%,#FF6F32 55%,#EEA61C 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .button-cyan { background: linear-gradient(135deg,#0088B3,#55CFF5); color: #06121a; }
+    .button-warm { background: linear-gradient(135deg,#FF6F32,#EEA61C); color: white; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body class="min-h-screen antialiased selection:bg-brandCyan/30 selection:text-brandCyan">
+  <header class="sticky top-0 z-30 px-4 sm:px-8 py-3 bg-darkBase/80 backdrop-blur-md border-b border-white/10">
+    <nav class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <a href="DALUYAN-UIM.html" class="flex items-center gap-3" aria-label="DALUYAN home">
+        <span class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brandCyan via-brandOrange to-brandAmber p-[2px]">
+          <span class="w-full h-full rounded-[10px] bg-darkBase flex items-center justify-center text-brandCyan"><i class="fa-solid fa-shield-halved"></i></span>
+        </span>
+        <span>
+          <span class="block text-lg font-extrabold text-gradient-brand">DALUYAN <span class="text-xs text-brandCyan">SSC-UIM</span></span>
+          <span class="block text-[10px] text-slate-400">Mechanism Tools</span>
+        </span>
+      </a>
+      <div class="flex items-center gap-3 text-xs font-semibold">
+        <a href="DALUYAN-UIM.html#directory" class="hidden sm:inline text-slate-300 hover:text-brandCyan transition-colors">Committee Directory</a>
+        <a href="DALUYAN-UIM.html" class="glass-panel px-4 py-2 rounded-xl text-brandCyan hover:border-brandCyan/50 transition-colors"><i class="fa-solid fa-arrow-left mr-2"></i>DALUYAN</a>
+        <button id="tool-signout" type="button" class="rounded-lg border border-white/15 px-3 py-2 text-slate-300 hover:text-white transition-colors">Sign Out</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="px-4 sm:px-8 py-12 sm:py-16">
+    <div class="max-w-7xl mx-auto space-y-10">
+      <div class="max-w-3xl space-y-3">
+        <span class="text-xs font-bold uppercase tracking-widest text-brandAmber">Internal Mechanism Protocols</span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold">SSC-UIM Mechanism Tools</h1>
+        <p class="text-sm text-slate-400 leading-relaxed">Access document tracking, event duty, leave applications, and attendance reporting.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-5">
+        <article class="glass-card rounded-2xl p-6 min-h-64 flex flex-col justify-between gap-6">
+          <div class="space-y-4">
+            <span class="w-12 h-12 rounded-xl bg-brandCyan/15 text-brandCyan flex items-center justify-center text-xl"><i class="fa-solid fa-hashtag"></i></span>
+            <div><h2 class="text-base font-bold">DTN Request</h2><p class="text-xs text-slate-400 mt-2 leading-relaxed">Prepare a document tracking number request for council communications.</p></div>
+          </div>
+          <button type="button" onclick="openTool('dtn')" class="button-cyan w-full py-2.5 rounded-xl text-xs font-semibold"><i class="fa-solid fa-file-signature mr-2"></i>Request DTN</button>
+        </article>
+
+        <article class="glass-card rounded-2xl p-6 min-h-64 flex flex-col justify-between gap-6">
+          <div class="space-y-4">
+            <span class="w-12 h-12 rounded-xl bg-brandOrange/15 text-brandOrange flex items-center justify-center text-xl"><i class="fa-solid fa-user-clock"></i></span>
+            <div><h2 class="text-base font-bold">Event Duty Tracker</h2><p class="text-xs text-slate-400 mt-2 leading-relaxed">Record an officer's event shift, venue, and check-in or check-out status.</p></div>
+          </div>
+          <button type="button" onclick="openTool('duty')" class="button-warm w-full py-2.5 rounded-xl text-xs font-semibold"><i class="fa-solid fa-clock mr-2"></i>Log Attendance</button>
+        </article>
+
+        <article class="glass-card rounded-2xl p-6 min-h-64 flex flex-col justify-between gap-6">
+          <div class="space-y-4">
+            <span class="w-12 h-12 rounded-xl bg-brandAmber/15 text-brandAmber flex items-center justify-center text-xl"><i class="fa-solid fa-file-signature"></i></span>
+            <div><h2 class="text-base font-bold">Leave of Absence</h2><p class="text-xs text-slate-400 mt-2 leading-relaxed">Prepare a leave application with committee, dates, and reason.</p></div>
+          </div>
+          <button type="button" onclick="openTool('leave')" class="glass-panel w-full py-2.5 rounded-xl text-xs font-semibold text-brandAmber hover:border-brandAmber/50"><i class="fa-solid fa-envelope-open-text mr-2"></i>File Leave Form</button>
+        </article>
+
+        <article class="glass-card rounded-2xl p-6 min-h-64 flex flex-col justify-between gap-6">
+          <div class="space-y-4">
+            <span class="w-12 h-12 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-xl"><i class="fa-solid fa-chart-pie"></i></span>
+            <div><h2 class="text-base font-bold">Attendance Report</h2><p class="text-xs text-slate-400 mt-2 leading-relaxed">Review the consolidated weekly attendance summary by committee.</p></div>
+          </div>
+          <button type="button" onclick="openTool('report')" class="glass-panel w-full py-2.5 rounded-xl text-xs font-semibold text-emerald-300 hover:border-emerald-400/50"><i class="fa-solid fa-chart-column mr-2"></i>View Report</button>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <div id="tool-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-sm overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="glass-panel rounded-2xl p-6 sm:p-8 max-w-2xl w-full relative my-8">
+      <button type="button" onclick="closeTool()" class="absolute top-4 right-4 w-9 h-9 rounded-lg text-slate-400 hover:text-white hover:bg-white/10" aria-label="Close dialog"><i class="fa-solid fa-xmark"></i></button>
+      <p id="modal-subtitle" class="text-[11px] font-bold uppercase tracking-widest text-brandCyan mb-2"></p>
+      <h2 id="modal-title" class="text-xl sm:text-2xl font-bold text-white pr-10 mb-6"></h2>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden glass-panel rounded-xl px-4 py-3 text-xs text-white shadow-xl" role="status" aria-live="polite"></div>
+
+  <script>
+    const modal = document.getElementById('tool-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalSubtitle = document.getElementById('modal-subtitle');
+    const modalBody = document.getElementById('modal-body');
+    let csrfToken = '';
+    let directoryMembers = [];
+    let currentUser = null;
+
+    const committeeOptions = '<option>CommAIRS</option><option>CommCREL</option><option>CommFIMA</option><option>CommPROL</option>';
+    const fieldClass = 'w-full glass-input rounded-lg px-3 py-2.5 text-xs';
+    const labelClass = 'block text-xs font-medium text-slate-300 mb-1';
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+    }
+
+    async function apiRequest(action, payload = null) {
+      const options = { credentials: 'same-origin', headers: {} };
+      if (payload !== null) {
+        options.method = 'POST';
+        options.headers['Content-Type'] = 'application/json';
+        options.headers['X-CSRF-Token'] = csrfToken;
+        options.body = JSON.stringify(payload);
+      }
+      const response = await fetch(`api.php?action=${encodeURIComponent(action)}`, options);
+      const data = await response.json();
+      if (response.status === 401) {
+        window.location.replace('login.html');
+        throw new Error('Sign in to continue.');
+      }
+      if (!response.ok) throw new Error(data.error || 'The request could not be completed.');
+      return data;
+    }
+
+    async function initializeTools() {
+      try {
+        const response = await fetch('api.php?action=session', { credentials: 'same-origin' });
+        if (!response.ok) throw new Error('Sign-in service unavailable.');
+        const session = await response.json();
+        if (!session.user) {
+          window.location.replace('login.html');
+          return;
+        }
+        currentUser = session.user;
+        csrfToken = session.csrf;
+        const directory = await apiRequest('directory');
+        directoryMembers = directory.officers.filter(person => session.user.role !== 'officer' || person.email.toLowerCase() === session.user.email.toLowerCase());
+        const requestedTool = new URLSearchParams(window.location.search).get('tool');
+        if (['dtn', 'duty', 'leave', 'report'].includes(requestedTool)) openTool(requestedTool);
+      } catch (error) {
+        showToast(error.message || 'The service is unavailable.');
+      }
+    }
+
+    document.getElementById('tool-signout').addEventListener('click', async () => {
+      try {
+        await apiRequest('logout', {});
+        window.location.replace('login.html');
+      } catch (error) {
+        showToast(error.message);
+      }
+    });
+
+    function openTool(type) {
+      const forms = {
+        dtn: {
+          subtitle: 'CommAIRS Archival Mechanism',
+          title: 'Document Tracking Number Request',
+          content: `<form data-tool="dtn" class="space-y-4">
+            <div><label class="${labelClass}">Document Title / Subject</label><input class="${fieldClass}" name="subject" required placeholder="e.g. Financial Requisition for Student Summit"></div>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div><label class="${labelClass}">Target Committee</label><select class="${fieldClass}" name="committee">${committeeOptions}</select></div>
+              <div><label class="${labelClass}">Requesting Officer Email</label><input class="${fieldClass}" name="email" type="email" required value="${escapeHtml(currentUser?.email ?? '')}" placeholder="24-XXXXX@g.batstate-u.edu.ph" ${currentUser?.role === 'officer' ? 'readonly' : ''}></div>
+            </div>
+            <div><label class="${labelClass}">Purpose / Description</label><textarea class="${fieldClass} resize-y" name="description" rows="3" required placeholder="State the purpose and intended signatories"></textarea></div>
+            <div class="flex justify-end gap-3"><button type="button" onclick="closeTool()" class="glass-panel px-4 py-2 rounded-lg text-xs text-slate-300">Cancel</button><button class="button-cyan px-5 py-2 rounded-lg text-xs font-semibold">Generate DTN</button></div>
+          </form><div id="dtn-result" class="hidden mt-4 p-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-center"><p class="text-xs text-slate-300">Generated request number</p><p id="dtn-code" class="text-xl font-mono font-bold text-emerald-300 mt-1"></p></div>`
+        },
+        duty: {
+          subtitle: 'Council Operations Protocol',
+          title: 'Event Duty Tracker',
+          content: `<form data-tool="duty" class="space-y-4">
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div><label class="${labelClass}">Officer</label><select class="${fieldClass}" name="officerEmail" required>${directoryMembers.map(person => `<option value="${escapeHtml(person.email)}">${escapeHtml(person.name)} · ${escapeHtml(person.category)}</option>`).join('')}</select></div>
+              <div><label class="${labelClass}">Event / Shift Name</label><input class="${fieldClass}" name="event" required placeholder="Event or shift"></div>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div><label class="${labelClass}">Duty Venue</label><input class="${fieldClass}" name="venue" required placeholder="Venue"></div>
+              <div><label class="${labelClass}">Shift Status</label><select class="${fieldClass}" name="status"><option value="check_in">Duty Check-In (Time In)</option><option value="check_out">Duty Check-Out (Time Out)</option><option value="on_call">On-Call Emergency Duty</option></select></div>
+            </div>
+            <div class="flex justify-end gap-3"><button type="button" onclick="closeTool()" class="glass-panel px-4 py-2 rounded-lg text-xs text-slate-300">Cancel</button><button class="button-warm px-5 py-2 rounded-lg text-xs font-semibold">Log Attendance</button></div>
+          </form>`
+        },
+        leave: {
+          subtitle: 'CommAIRS Administrative Form',
+          title: 'Leave of Absence',
+          content: `<form data-tool="leave" class="space-y-4">
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div><label class="${labelClass}">Filing Officer Email</label><input class="${fieldClass}" name="email" type="email" required value="${escapeHtml(currentUser?.email ?? '')}" placeholder="24-XXXXX@g.batstate-u.edu.ph" ${currentUser?.role === 'officer' ? 'readonly' : ''}></div>
+              <div><label class="${labelClass}">Committee</label><select class="${fieldClass}" name="committee">${committeeOptions}<option>Higher Executives</option></select></div>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div><label class="${labelClass}">Start Date</label><input class="${fieldClass}" name="start" type="date" required></div>
+              <div><label class="${labelClass}">End Date</label><input class="${fieldClass}" name="end" type="date" required></div>
+            </div>
+            <div><label class="${labelClass}">Reason for Absence</label><textarea class="${fieldClass} resize-y" name="reason" rows="3" required placeholder="Specify academic or personal justification"></textarea></div>
+            <div class="flex justify-end gap-3"><button type="button" onclick="closeTool()" class="glass-panel px-4 py-2 rounded-lg text-xs text-slate-300">Cancel</button><button class="glass-panel px-5 py-2 rounded-lg text-xs font-semibold text-brandAmber border-brandAmber/40">Submit Application</button></div>
+          </form>`
+        },
+        report: {
+          subtitle: 'Consolidated Statistics',
+          title: 'Weekly Attendance Report',
+          content: `<div class="space-y-4">
+            <div class="glass-card rounded-xl p-3 flex flex-wrap justify-between items-center gap-2 text-xs"><span class="text-slate-300">Live database · Rolling 7 days</span><span id="report-hours" class="text-brandCyan font-mono">Loading...</span></div>
+            <div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead><tr class="border-b border-white/10 text-slate-400"><th class="p-3">Committee</th><th class="p-3">Officers</th><th class="p-3">Duty Hours</th><th class="p-3">Entries</th></tr></thead><tbody id="report-rows" class="divide-y divide-white/5 text-slate-200"></tbody></table></div>
+            <div class="flex justify-end"><button type="button" onclick="closeTool()" class="button-cyan px-5 py-2 rounded-lg text-xs font-semibold">Close Report</button></div>
+          </div>`
+        }
+      };
+
+      const form = forms[type];
+      if (!form) return;
+      modalSubtitle.textContent = form.subtitle;
+      modalTitle.textContent = form.title;
+      modalBody.innerHTML = form.content;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      modal.querySelector('input, button')?.focus();
+      if (type === 'report') loadReport();
+    }
+
+    async function loadReport() {
+      try {
+        const { stats } = await apiRequest('dashboard');
+        document.getElementById('report-hours').textContent = `${Number(stats.dutyHours).toFixed(2)} hrs logged`;
+        const rows = stats.byCommittee.map(item => `<tr><td class="p-3">${escapeHtml(item.committee)}</td><td class="p-3">${item.officers}</td><td class="p-3 font-mono">${Number(item.hours).toFixed(2)} hrs</td><td class="p-3">${item.entries}</td></tr>`).join('');
+        document.getElementById('report-rows').innerHTML = rows || '<tr><td class="p-3 text-slate-400" colspan="4">No attendance records in the last seven days.</td></tr>';
+      } catch (error) {
+        showToast(error.message);
+      }
+    }
+
+    function closeTool() {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.remove('hidden');
+      window.setTimeout(() => toast.classList.add('hidden'), 3200);
+    }
+
+    modal.addEventListener('click', event => {
+      if (event.target === modal) closeTool();
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && !modal.classList.contains('hidden')) closeTool();
+    });
+
+    modalBody.addEventListener('submit', async event => {
+      const form = event.target.closest('form[data-tool]');
+      if (!form) return;
+      event.preventDefault();
+      const payload = Object.fromEntries(new FormData(form).entries());
+      try {
+        const result = await apiRequest(form.dataset.tool, payload);
+        if (form.dataset.tool === 'dtn') {
+          document.getElementById('dtn-code').textContent = result.request.code;
+          document.getElementById('dtn-result').classList.remove('hidden');
+          showToast(`DTN request saved: ${result.request.code}`);
+          return;
+        }
+        showToast(form.dataset.tool === 'duty' ? 'Attendance record saved.' : 'Leave request saved.');
+        closeTool();
+      } catch (error) {
+        showToast(error.message);
+      }
+    });
+
+    initializeTools();
+  </script>
+</body>
+</html>
