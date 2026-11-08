@@ -3,811 +3,884 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#060a12">
   <title>DALUYAN | SSC-UIM - Batangas State University ARASOF-Nasugbu</title>
+  <meta name="description" content="DALUYAN is the unified internal mechanism of the Supreme Student Council, Batangas State University ARASOF-Nasugbu: document tracking, duty attendance, leave filing, and council records.">
 
-  <!-- Google Fonts: Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
-
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brandCyan: '#55CFF5',
-            brandTeal: '#0088B3',
-            brandOrange: '#FF6F32',
-            brandAmber: '#EEA61C',
-            darkBase: '#060a12',
-            darkSurface: '#0b1322',
-            darkGlass: 'rgba(15, 23, 42, 0.65)',
-          },
-          fontFamily: {
-            poppins: ['Poppins', 'sans-serif'],
-          },
-          animation: {
-            'float-1': 'float 9s ease-in-out infinite',
-            'float-2': 'float 13s ease-in-out infinite 3s',
-            'pulse-glow': 'pulseGlow 5s ease-in-out infinite',
-          },
-          keyframes: {
-            float: {
-              '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-              '50%': { transform: 'translateY(-16px) rotate(2deg)' },
-            },
-            pulseGlow: {
-              '0%, 100%': { opacity: '0.35', transform: 'scale(1)' },
-              '50%': { opacity: '0.65', transform: 'scale(1.06)' },
-            }
-          }
-        }
-      }
-    }
-  </script>
-
   <style>
+    :root {
+      --brand-cyan: #55CFF5;
+      --brand-teal: #0088B3;
+      --brand-orange: #FF6F32;
+      --brand-amber: #EEA61C;
+      --dark-base: #060a12;
+      --dark-surface: #0b1322;
+      --text: #f3f4f6;
+      --muted: #94a3b8;
+      --muted-dim: #64748b;
+      --glass: rgba(255, 255, 255, .05);
+      --glass-hover: rgba(255, 255, 255, .09);
+      --panel: rgba(11, 19, 34, .62);
+      --line: rgba(255, 255, 255, .12);
+      --line-soft: rgba(255, 255, 255, .08);
+      --sans: 'Poppins', system-ui, -apple-system, sans-serif;
+      --mono: 'Poppins', system-ui, -apple-system, sans-serif;
+      --maxw: 1200px;
+      --shadow-glass: 0 20px 50px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .18);
+    }
+
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
     body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #060a12;
-      color: #f3f4f6;
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--text);
+      background-color: var(--dark-base);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
+    ::selection { background: rgba(85, 207, 245, .3); color: #f3f4f6; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+    img, svg { display: block; }
+    :focus-visible { outline: 2px solid var(--brand-cyan); outline-offset: 3px; border-radius: 4px; }
 
-    /* Modern Glassmorphism Core Styling */
+    .wrap { width: min(100% - 2.5rem, var(--maxw)); margin-inline: auto; position: relative; z-index: 1; }
+
+    /* ---------- Ambient glassmorphism backdrop ---------- */
+    .ambient { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .ambient span { position: absolute; display: block; border-radius: 50%; filter: blur(130px); opacity: .5; }
+    .ambient span:nth-child(1) { top: -12rem; left: -10rem; width: 30rem; height: 30rem; background: rgba(85, 207, 245, .35); animation: floatA 16s ease-in-out infinite; }
+    .ambient span:nth-child(2) { top: 22%; right: -12rem; width: 32rem; height: 32rem; background: rgba(0, 136, 179, .32); animation: floatB 21s ease-in-out infinite; }
+    .ambient span:nth-child(3) { top: 58%; left: -8rem; width: 26rem; height: 26rem; background: rgba(255, 111, 50, .26); animation: floatA 19s ease-in-out infinite 2s; }
+    .ambient span:nth-child(4) { bottom: -14rem; right: 16%; width: 28rem; height: 28rem; background: rgba(238, 166, 28, .22); animation: floatB 24s ease-in-out infinite 1s; }
+    @keyframes floatA { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(1.5rem, -2rem, 0) scale(1.06); } }
+    @keyframes floatB { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(-2rem, 1.5rem, 0) scale(1.08); } }
+
+    /* ---------- Glass surfaces ---------- */
     .glass-panel {
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--panel);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-glass);
     }
-
     .glass-card {
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--glass);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.13);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .32), inset 0 1px 1px rgba(255, 255, 255, .12);
+      transition: background-color .25s ease, border-color .25s ease, transform .25s ease, box-shadow .25s ease;
     }
-
     .glass-card:hover {
-      background-color: rgba(255, 255, 255, 0.09);
-      border-color: rgba(85, 207, 245, 0.45);
-      transform: translateY(-4px);
-      box-shadow: 0 18px 40px -5px rgba(85, 207, 245, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+      background: var(--glass-hover);
+      border-color: rgba(85, 207, 245, .45);
+      transform: translateY(-3px);
+      box-shadow: 0 18px 40px -10px rgba(85, 207, 245, .25), inset 0 1px 1px rgba(255, 255, 255, .22);
     }
-
     .glass-input {
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .16);
+      color: #fff;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      color: #ffffff;
-      transition: all 0.3s ease;
+      transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
     }
+    .glass-input::placeholder { color: var(--muted-dim); }
+    .glass-input:focus { outline: none; background: rgba(255, 255, 255, .11); border-color: var(--brand-cyan); box-shadow: 0 0 20px rgba(85, 207, 245, .28); }
 
-    .glass-input:focus {
-      outline: none;
-      background: rgba(255, 255, 255, 0.12);
-      border-color: #55CFF5;
-      box-shadow: 0 0 20px rgba(85, 207, 245, 0.35);
+    /* ---------- Type & utility ---------- */
+    .mono { font-family: var(--sans); }
+    .grad-brand { background: linear-gradient(120deg, var(--brand-cyan) 0%, var(--brand-orange) 56%, var(--brand-amber) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .grad-warm { background: linear-gradient(120deg, var(--brand-orange), var(--brand-amber)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .grad-cyan { background: linear-gradient(120deg, var(--brand-cyan), var(--brand-teal)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-family: var(--sans); font-size: .625rem; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--brand-cyan); font-weight: 600;
     }
+    .eyebrow::before { content: ''; width: .4rem; height: .4rem; border-radius: 50%; background: var(--brand-cyan); box-shadow: 0 0 10px rgba(85, 207, 245, .9); }
+    .eyebrow.is-warm { color: var(--brand-amber); }
+    .eyebrow.is-warm::before { background: var(--brand-amber); box-shadow: 0 0 10px rgba(238, 166, 28, .9); }
 
-    .glass-button-primary {
-      background: linear-gradient(135deg, #FF6F32 0%, #EEA61C 100%);
-      box-shadow: 0 8px 25px rgba(255, 111, 50, 0.35);
-      transition: all 0.3s ease;
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+      padding: .82rem 1.25rem; border-radius: .8rem; border: 1px solid transparent;
+      font-size: .75rem; font-weight: 600; letter-spacing: .01em;
+      transition: transform .22s ease, box-shadow .22s ease, background-color .22s ease, border-color .22s ease;
+      white-space: nowrap;
     }
+    .btn i { font-size: .7rem; }
+    .btn-primary { background: linear-gradient(135deg, var(--brand-orange) 0%, var(--brand-amber) 100%); color: #060a12; box-shadow: 0 10px 26px rgba(255, 111, 50, .32); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(255, 111, 50, .5); }
+    .btn-cyan { background: linear-gradient(135deg, var(--brand-teal), var(--brand-cyan)); color: #060a12; box-shadow: 0 10px 26px rgba(85, 207, 245, .26); }
+    .btn-cyan:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(85, 207, 245, .45); }
+    .btn-glass {
+      background: rgba(255, 255, 255, .07); border-color: rgba(255, 255, 255, .18); color: var(--text);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    }
+    .btn-glass:hover { background: rgba(255, 255, 255, .14); border-color: rgba(85, 207, 245, .55); transform: translateY(-2px); box-shadow: 0 0 22px rgba(85, 207, 245, .22); }
 
-    .glass-button-primary:hover {
-      box-shadow: 0 12px 30px rgba(255, 111, 50, 0.55);
-      transform: translateY(-2deg);
+    /* ---------- Campus brief strip ---------- */
+    .brief-bar {
+      position: relative; z-index: 2;
+      border-bottom: 1px solid var(--line-soft);
+      background: linear-gradient(90deg, rgba(6, 10, 18, .9), rgba(11, 19, 34, .8), rgba(6, 10, 18, .9));
+      font-family: var(--sans); font-size: .625rem; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--muted);
     }
+    .brief-bar .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .35rem 1.5rem; padding: .6rem 0; }
+    .brief-bar strong { color: #fff; font-weight: 500; }
+    .brief-links { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem 1.1rem; }
+    .brief-links a { display: inline-flex; align-items: center; gap: .35rem; }
+    .brief-links a:hover { color: var(--brand-cyan); }
+    .brief-links i { color: var(--brand-orange); font-size: .65rem; }
 
-    .glass-button-secondary {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      transition: all 0.3s ease;
+    /* ---------- Sticky header ---------- */
+    .site-header { position: sticky; top: 0; z-index: 40; padding: .85rem 1rem .5rem; }
+    .nav-shell {
+      display: flex; align-items: center; justify-content: space-between; gap: 1.25rem;
+      padding: .6rem 1rem .6rem 1.1rem; border-radius: 1.15rem;
+      background: rgba(11, 19, 34, .72);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, .4), inset 0 1px 0 rgba(255, 255, 255, .14);
     }
+    .brand { display: inline-flex; align-items: center; gap: .8rem; min-width: 0; }
+    .brand-mark {
+      width: 2.6rem; height: 2.6rem; border-radius: .8rem; padding: 2px; flex: 0 0 auto;
+      background: linear-gradient(135deg, var(--brand-cyan), var(--brand-orange), var(--brand-amber));
+      box-shadow: 0 8px 20px rgba(85, 207, 245, .18);
+    }
+    .brand-mark > span { width: 100%; height: 100%; border-radius: .68rem; background: var(--dark-base); display: grid; place-items: center; color: var(--brand-cyan); font-size: 1.05rem; }
+    .brand-name { display: block; font-size: 1.25rem; font-weight: 800; letter-spacing: .01em; line-height: 1; background: linear-gradient(120deg, var(--brand-cyan), var(--brand-orange) 58%, var(--brand-amber)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .brand-sub { display: block; font-family: var(--sans); font-size: .5rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted-dim); margin-top: .35rem; }
 
-    .glass-button-secondary:hover {
-      background: rgba(255, 255, 255, 0.16);
-      border-color: #55CFF5;
-      box-shadow: 0 0 20px rgba(85, 207, 245, 0.25);
+    .site-nav { display: flex; align-items: center; gap: 1.4rem; }
+    .site-nav a {
+      font-size: .7rem; font-weight: 500; color: var(--muted);
+      padding: .3rem 0; border-bottom: 1px solid transparent; transition: color .2s ease, border-color .2s ease;
     }
+    .site-nav a:hover { color: var(--brand-cyan); border-color: rgba(85, 207, 245, .6); }
+    .site-nav .nav-signin { color: var(--brand-cyan); display: inline-flex; align-items: center; gap: .4rem; }
+    .nav-cta { display: flex; align-items: center; gap: .6rem; }
+    .nav-cta .btn { padding: .6rem .95rem; font-size: .7rem; }
+    .menu-toggle { display: none; width: 2.4rem; height: 2.4rem; border: 1px solid var(--line); border-radius: .7rem; color: var(--muted); place-items: center; background: rgba(255, 255, 255, .05); }
+    .menu-toggle:hover { color: #fff; border-color: rgba(85, 207, 245, .4); }
+    .mobile-nav { display: none; margin-top: .6rem; border-radius: 1.15rem; padding: .6rem 1rem 1rem; background: rgba(11, 19, 34, .92); border: 1px solid var(--line); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+    .mobile-nav.is-open { display: block; }
+    .mobile-nav a { display: block; padding: .7rem .2rem; border-bottom: 1px solid var(--line-soft); font-size: .8rem; color: var(--muted); }
+    .mobile-nav a:last-child { border-bottom: 0; }
+    .mobile-nav a:hover { color: var(--brand-cyan); }
 
-    .glass-button-cyan {
-      background: linear-gradient(135deg, #0088B3 0%, #55CFF5 100%);
-      box-shadow: 0 8px 25px rgba(85, 207, 245, 0.3);
-      transition: all 0.3s ease;
+    /* ---------- Hero ---------- */
+    .hero { padding: clamp(2rem, 5vw, 3.6rem) 0 clamp(1.5rem, 3vw, 2.2rem); }
+    .hero-grid { display: grid; grid-template-columns: 1.12fr .88fr; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+    .hero-badges { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.2rem; }
+    .badge {
+      display: inline-flex; align-items: center; gap: .45rem;
+      padding: .38rem .8rem; border-radius: 999px; font-size: .65rem; font-weight: 600;
+      background: rgba(255, 255, 255, .05); border: 1px solid rgba(85, 207, 245, .32); color: var(--brand-cyan);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     }
+    .badge.is-warm { border-color: rgba(255, 111, 50, .35); background: rgba(255, 111, 50, .1); color: var(--brand-amber); }
+    .badge i { font-size: .65rem; }
+    .hero h1 {
+      margin: 0; font-size: clamp(2.2rem, 5.4vw, 3.9rem); font-weight: 800;
+      line-height: 1.08; letter-spacing: -.025em;
+    }
+    .hero h1 span { display: inline; }
+    .hero-lead { margin: 1.25rem 0 0; max-width: 34rem; font-size: .9rem; font-weight: 300; line-height: 1.85; color: #cbd5e1; }
+    .hero-lead strong { font-weight: 500; color: #fff; }
+    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem; margin-top: 1.8rem; }
+    .hero-meta { display: flex; align-items: center; gap: .4rem; margin: 1rem 0 0; font-size: .68rem; color: var(--muted-dim); }
+    .hero-meta i { color: var(--brand-cyan); }
 
-    .glass-button-cyan:hover {
-      box-shadow: 0 12px 30px rgba(85, 207, 245, 0.5);
-      transform: translateY(-2deg);
+    .index-card {
+      position: relative; overflow: hidden;
+      border-radius: 1.5rem; padding: 1.4rem 1.4rem 1rem;
+      background: linear-gradient(160deg, rgba(85, 207, 245, .12), rgba(11, 19, 34, .5) 38%, rgba(11, 19, 34, .72));
+      border: 1px solid rgba(255, 255, 255, .16);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .85), inset 0 1px 0 rgba(255, 255, 255, .16);
     }
+    .index-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding-bottom: .95rem; border-bottom: 1px solid var(--line-soft); }
+    .index-head p { margin: 0; font-family: var(--sans); font-size: .55rem; letter-spacing: .17em; text-transform: uppercase; color: var(--muted-dim); }
+    .index-head h2 { margin: .4rem 0 0; font-size: 1.05rem; font-weight: 700; letter-spacing: -.01em; }
+    .seal {
+      width: 3rem; height: 3rem; border-radius: 50%; flex: 0 0 auto; padding: 2px;
+      background: conic-gradient(from 120deg, var(--brand-cyan), var(--brand-orange), var(--brand-amber), var(--brand-cyan));
+      box-shadow: 0 0 26px rgba(85, 207, 245, .28);
+    }
+    .seal span { width: 100%; height: 100%; border-radius: 50%; background: #0b1322; display: grid; place-items: center; color: var(--brand-cyan); font-size: .95rem; }
 
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
+    .index-list { list-style: none; margin: 0; padding: 0; }
+    .index-list li + li { border-top: 1px solid var(--line-soft); }
+    .index-list a {
+      display: grid; grid-template-columns: 1.9rem 1fr auto; align-items: center; gap: .85rem;
+      padding: .8rem .35rem; border-radius: .55rem;
+      transition: background-color .2s ease, padding-left .2s ease;
     }
-    ::-webkit-scrollbar-track {
-      background: #060a12;
+    .index-list a:hover { background: rgba(255, 255, 255, .06); padding-left: .7rem; }
+    .index-num { font-family: var(--sans); font-size: .55rem; letter-spacing: .06em; color: var(--brand-amber); }
+    .index-name { display: block; font-size: .8rem; font-weight: 600; color: #f1f5f9; }
+    .index-desc { display: block; font-family: var(--sans); font-size: .55rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-dim); margin-top: .15rem; }
+    .index-list i { font-size: .65rem; color: rgba(148, 163, 184, .7); transition: color .2s ease, transform .2s ease; }
+    .index-list a:hover i { color: var(--brand-cyan); transform: translateX(3px); }
+    .index-foot {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem 1rem;
+      margin-top: .35rem; padding-top: .85rem; border-top: 1px solid var(--line-soft);
+      font-family: var(--sans); font-size: .55rem; letter-spacing: .05em; color: var(--muted-dim);
     }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.18);
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #0088B3;
-    }
+    .index-foot i { color: var(--brand-orange); margin-right: .3rem; }
+    .aside-note { margin: .8rem 0 0; font-family: var(--sans); font-size: .55rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted-dim); text-align: right; }
 
-    /* Dynamic Gradients */
-    .text-gradient-brand {
-      background: linear-gradient(135deg, #55CFF5 0%, #FF6F32 50%, #EEA61C 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    /* ---------- Stat cards ---------- */
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: clamp(1.75rem, 4vw, 2.75rem); }
+    .stat-card { border-radius: 1.15rem; padding: 1.15rem 1.2rem; }
+    .stat-value { margin: 0; display: flex; align-items: baseline; gap: .35rem; font-size: clamp(1.7rem, 3vw, 2.15rem); font-weight: 800; letter-spacing: -.02em; line-height: 1; }
+    .stat-value small { font-family: var(--sans); font-size: .5rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted-dim); }
+    .stat-label { margin: .55rem 0 0; font-size: .62rem; color: var(--muted); letter-spacing: .01em; }
+    .stat-cyan .stat-value { color: var(--brand-cyan); }
+    .stat-orange .stat-value { color: var(--brand-orange); }
+    .stat-amber .stat-value { color: var(--brand-amber); }
+    .stat-brand .stat-value { background: linear-gradient(120deg, var(--brand-cyan), var(--brand-orange)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 
-    .text-gradient-cyan {
-      background: linear-gradient(135deg, #55CFF5 0%, #0088B3 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    /* ---------- Ticker ---------- */
+    .ticker { position: relative; overflow: hidden; border-block: 1px solid var(--line-soft); background: rgba(11, 19, 34, .55); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .ticker-track { display: flex; width: max-content; animation: slide 40s linear infinite; }
+    .ticker-track span { display: inline-flex; align-items: center; gap: 1.3rem; padding: .55rem 1.3rem; font-family: var(--sans); font-size: .6rem; letter-spacing: .16em; text-transform: uppercase; color: #cbd5e1; white-space: nowrap; }
+    .ticker-track span::after { content: '◆'; color: var(--brand-orange); font-size: .5rem; letter-spacing: 0; }
+    @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-    .text-gradient-warm {
-      background: linear-gradient(135deg, #FF6F32 0%, #EEA61C 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    /* ---------- Sections ---------- */
+    .section { padding: clamp(2.6rem, 6vw, 4.4rem) 0; position: relative; }
+    .section + .section { border-top: 1px solid var(--line-soft); }
+    .section-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1.2rem; margin-bottom: 2rem; }
+    .section-head h2 { margin: .75rem 0 0; font-size: clamp(1.75rem, 3.4vw, 2.5rem); font-weight: 800; line-height: 1.1; letter-spacing: -.025em; }
+    .section-head p { margin: .6rem 0 0; max-width: 36rem; font-size: .82rem; font-weight: 300; color: var(--muted); line-height: 1.75; }
+    .section-meta { text-align: right; font-family: var(--sans); font-size: .55rem; letter-spacing: .13em; text-transform: uppercase; color: var(--muted-dim); }
+    .section-meta b { display: block; margin-top: .35rem; font-size: .7rem; letter-spacing: .05em; color: var(--brand-cyan); font-weight: 600; }
 
-    /* Dynamic Interactive Glow */
-    #cursor-light {
-      position: fixed;
+    /* ---------- Leadership ---------- */
+    .adviser {
+      position: relative; overflow: hidden; border-radius: 1.4rem; padding: clamp(1.2rem, 3vw, 1.75rem);
+      display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.2rem 1.4rem;
+      background: rgba(238, 166, 28, .06);
+      border: 1px solid rgba(238, 166, 28, .32);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 20px 44px -30px rgba(238, 166, 28, .6), inset 0 1px 0 rgba(255, 255, 255, .12);
+    }
+    .adviser::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, var(--brand-orange), var(--brand-amber)); }
+    .adviser-icon { width: 3.2rem; height: 3.2rem; border-radius: 1rem; display: grid; place-items: center; font-size: 1.15rem; color: var(--brand-amber); background: rgba(238, 166, 28, .16); border: 1px solid rgba(238, 166, 28, .32); }
+    .adviser-role { display: inline-flex; align-items: center; gap: .4rem; font-family: var(--sans); font-size: .55rem; letter-spacing: .16em; text-transform: uppercase; color: var(--brand-amber); }
+    .adviser h3 { margin: .4rem 0 0; font-size: clamp(1.2rem, 2.4vw, 1.55rem); font-weight: 700; line-height: 1.15; }
+    .adviser p { margin: .3rem 0 0; font-size: .72rem; color: var(--muted); }
+    .adviser-contact { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+
+    .contact-line { font-family: var(--sans); font-size: .65rem; color: var(--brand-cyan); }
+    .contact-line:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+    .copy-btn {
+      width: 2rem; height: 2rem; border-radius: .6rem; display: inline-grid; place-items: center;
+      border: 1px solid var(--line); background: rgba(255, 255, 255, .05); color: var(--muted);
+      font-size: .68rem; transition: color .2s ease, border-color .2s ease, background-color .2s ease;
+    }
+    .copy-btn:hover { color: #fff; border-color: rgba(85, 207, 245, .5); background: rgba(85, 207, 245, .12); }
+
+    .exec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; margin-top: 1.1rem; }
+    .exec-card {
+      position: relative; overflow: hidden;
+      border-radius: 1.35rem; padding: 1.3rem;
+      display: flex; flex-direction: column; min-height: 14rem;
+      background: var(--glass);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--line);
+      box-shadow: 0 14px 34px -24px rgba(0, 0, 0, .9), inset 0 1px 1px rgba(255, 255, 255, .12);
+      transition: transform .25s ease, border-color .25s ease, background-color .25s ease, box-shadow .25s ease;
+    }
+    .exec-card::before { content: ''; position: absolute; inset: 0 0 auto; height: 2px; background: var(--accent, var(--brand-cyan)); }
+    .exec-card:hover { transform: translateY(-4px); background: var(--glass-hover); border-color: color-mix(in srgb, var(--accent, var(--brand-cyan)) 55%, transparent); box-shadow: 0 22px 44px -26px var(--accent, var(--brand-cyan)); }
+    .exec-top { display: flex; align-items: flex-start; justify-content: space-between; gap: .8rem; }
+    .exec-icon { width: 2.7rem; height: 2.7rem; border-radius: .9rem; display: grid; place-items: center; font-size: 1rem; background: color-mix(in srgb, var(--accent, var(--brand-cyan)) 16%, transparent); color: var(--accent, var(--brand-cyan)); border: 1px solid color-mix(in srgb, var(--accent, var(--brand-cyan)) 38%, transparent); }
+    .role-pill { font-family: var(--sans); font-size: .5rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; padding: .3rem .55rem; border-radius: 999px; color: var(--accent, var(--brand-cyan)); background: color-mix(in srgb, var(--accent, var(--brand-cyan)) 14%, transparent); border: 1px solid color-mix(in srgb, var(--accent, var(--brand-cyan)) 34%, transparent); white-space: nowrap; }
+    .exec-card h4 { margin: 1rem 0 0; font-size: 1rem; font-weight: 700; line-height: 1.3; letter-spacing: -.005em; }
+    .exec-note { margin: .3rem 0 0; font-size: .68rem; color: var(--muted); }
+    .exec-foot { margin-top: auto; padding-top: .9rem; border-top: 1px solid var(--line-soft); display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+    .exec-foot .mail { font-family: var(--sans); font-size: .6rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .exec-cyan { --accent: var(--brand-cyan); }
+    .exec-orange { --accent: var(--brand-orange); }
+    .exec-amber { --accent: var(--brand-amber); }
+
+    /* ---------- Directory ---------- */
+    .dir-shell {
+      border-radius: 1.4rem; overflow: hidden;
+      background: rgba(11, 19, 34, .55);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 24px 60px -34px rgba(0, 0, 0, .9), inset 0 1px 0 rgba(255, 255, 255, .12);
+    }
+    .dir-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .9rem 1.4rem; padding: 1rem 1.15rem; border-bottom: 1px solid var(--line-soft); }
+    .dir-tabs { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .dir-tabs button {
+      padding: .46rem .85rem; border-radius: 999px; font-size: .65rem; font-weight: 600; color: var(--muted);
+      border: 1px solid rgba(255, 255, 255, .1); background: rgba(255, 255, 255, .04);
+      transition: color .2s ease, background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+    .dir-tabs button:hover { color: #fff; border-color: rgba(85, 207, 245, .45); }
+    .dir-tabs button[aria-selected="true"] { background: var(--brand-cyan); border-color: var(--brand-cyan); color: #060a12; box-shadow: 0 6px 18px rgba(85, 207, 245, .35); }
+    .dir-search {
+      display: flex; align-items: center; gap: .5rem; min-width: min(17rem, 100%);
+      padding: .55rem .8rem; border-radius: .8rem;
+      background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .16);
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .dir-search:focus-within { border-color: var(--brand-cyan); box-shadow: 0 0 18px rgba(85, 207, 245, .25); }
+    .dir-search i { color: var(--muted-dim); font-size: .72rem; }
+    .dir-search input { width: 100%; border: 0; background: transparent; color: #fff; font-size: .72rem; padding: .1rem 0; }
+    .dir-search input::placeholder { color: var(--muted-dim); }
+    .dir-search input:focus { outline: 0; }
+    .dir-search button { color: var(--muted); font-size: .72rem; padding: .1rem .2rem; }
+    .dir-search button:hover { color: #fff; }
+
+    .register { list-style: none; margin: 0; padding: 0; }
+    .register-head {
+      display: grid; grid-template-columns: 2.3rem 1.35fr 1.1fr 1.05fr 2.2rem; gap: 1rem;
+      padding: .55rem 1.15rem; border-bottom: 1px solid var(--line-soft);
+      font-family: var(--sans); font-size: .5rem; letter-spacing: .15em; text-transform: uppercase; color: var(--muted-dim);
+      background: rgba(255, 255, 255, .03);
+    }
+    .register-row {
+      display: grid; grid-template-columns: 2.3rem 1.35fr 1.1fr 1.05fr 2.2rem; gap: 1rem; align-items: center;
+      padding: .85rem 1.15rem; border-bottom: 1px solid var(--line-soft);
+      transition: background-color .2s ease;
+    }
+    .register-row:last-child { border-bottom: 0; }
+    .register-row:hover { background: rgba(255, 255, 255, .05); }
+    .reg-id { font-family: var(--sans); font-size: .55rem; color: var(--muted-dim); }
+    .reg-person { display: flex; align-items: center; gap: .75rem; min-width: 0; }
+    .reg-monogram {
+      width: 2.1rem; height: 2.1rem; flex: 0 0 auto; border-radius: .65rem; padding: 1px;
+      background: linear-gradient(135deg, rgba(85, 207, 245, .8), rgba(255, 111, 50, .55));
+    }
+    .reg-monogram > span { width: 100%; height: 100%; border-radius: .58rem; background: #0b1322; display: grid; place-items: center; font-size: .62rem; font-weight: 700; color: #f3f4f6; letter-spacing: .02em; }
+    .reg-name { display: block; font-size: .78rem; font-weight: 600; line-height: 1.3; }
+    .reg-role { display: block; font-size: .6rem; color: var(--muted-dim); margin-top: .1rem; }
+    .reg-committee span {
+      display: inline-block; font-family: var(--sans); font-size: .5rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+      padding: .2rem .45rem; border-radius: 999px; border: 1px solid currentColor; background: rgba(255, 255, 255, .05);
+      white-space: nowrap;
+    }
+    .reg-email { font-family: var(--sans); font-size: .6rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .reg-email:hover { color: var(--brand-cyan); }
+    .dir-empty { display: none; padding: 3rem 1.5rem; text-align: center; }
+    .dir-empty.is-visible { display: block; }
+    .dir-empty h3 { margin: 0 0 .3rem; font-size: 1.05rem; font-weight: 700; }
+    .dir-empty p { margin: 0 0 1.1rem; font-size: .75rem; color: var(--muted); }
+    .dir-empty .btn { padding: .6rem 1rem; font-size: .7rem; }
+
+    /* ---------- Mechanism services ---------- */
+    .mech-list { border-top: 1px solid var(--line); }
+    .mech-row {
+      display: grid; grid-template-columns: 3rem 1fr 2.4rem; align-items: start; gap: .8rem 1.3rem;
+      padding: 1.15rem .8rem; border-bottom: 1px solid var(--line-soft); border-radius: .8rem;
+      transition: background-color .22s ease, padding-left .22s ease;
+    }
+    .mech-row:hover { background: rgba(255, 255, 255, .05); padding-left: 1.15rem; }
+    .mech-num { font-family: var(--sans); font-size: .6rem; letter-spacing: .1em; color: var(--brand-orange); padding-top: .5rem; }
+    .mech-body h3 { margin: 0; font-size: clamp(1.02rem, 2.1vw, 1.22rem); font-weight: 700; line-height: 1.3; letter-spacing: -.01em; }
+    .mech-tag {
+      display: inline-block; vertical-align: middle; margin-left: .5rem;
+      font-family: var(--sans); font-size: .48rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--brand-cyan); background: rgba(85, 207, 245, .1); border: 1px solid rgba(85, 207, 245, .3);
+      border-radius: 999px; padding: .14rem .4rem; white-space: nowrap;
+    }
+    .mech-body p { margin: .35rem 0 0; font-size: .75rem; font-weight: 300; color: var(--muted); line-height: 1.7; }
+    .mech-arrow { width: 2.2rem; height: 2.2rem; border-radius: .7rem; display: grid; place-items: center; font-size: .65rem; color: var(--brand-cyan); border: 1px solid rgba(255, 255, 255, .14); background: rgba(255, 255, 255, .05); transition: background-color .2s ease, color .2s ease, border-color .2s ease; }
+    .mech-row:hover .mech-arrow { background: var(--brand-cyan); border-color: var(--brand-cyan); color: #060a12; }
+    .mech-note { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.2rem; margin: 1.2rem 0 0; font-family: var(--sans); font-size: .55rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-dim); }
+    .mech-note i { color: var(--brand-cyan); }
+
+    /* ---------- Footer ---------- */
+    .site-footer { position: relative; margin-top: clamp(1.5rem, 4vw, 3rem); padding: clamp(2.2rem, 5vw, 3.4rem) 0 1.5rem; background: rgba(6, 10, 18, .82); border-top: 1px solid var(--line-soft); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+    .footer-top { display: grid; grid-template-columns: 1.2fr .8fr .8fr; gap: 2.4rem; padding-bottom: 2rem; border-bottom: 1px solid var(--line-soft); }
+    .footer-wordmark { margin: 0; font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800; letter-spacing: -.01em; background: linear-gradient(120deg, var(--brand-cyan), var(--brand-orange) 60%, var(--brand-amber)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .footer-wordmark span { font-family: var(--sans); font-size: .5rem; letter-spacing: .16em; -webkit-text-fill-color: var(--brand-cyan); color: var(--brand-cyan); vertical-align: super; margin-left: .4rem; }
+    .footer-tagline { margin: .6rem 0 .9rem; font-size: .78rem; font-style: italic; color: #cbd5e1; }
+    .footer-address { margin: 0; font-size: .65rem; line-height: 1.9; color: var(--muted-dim); }
+    .footer-col h4 { margin: 0 0 .8rem; font-family: var(--sans); font-size: .5rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--muted-dim); }
+    .footer-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+    .footer-col a { display: inline-flex; align-items: center; gap: .4rem; font-size: .72rem; color: #cbd5e1; }
+    .footer-col a:hover { color: var(--brand-cyan); }
+    .footer-col a i { font-size: .55rem; color: var(--brand-amber); }
+    .swatches { display: flex; align-items: center; gap: .35rem; margin-top: .9rem; }
+    .swatches span { width: .7rem; height: .7rem; border-radius: 50%; display: block; box-shadow: 0 0 10px rgba(255, 255, 255, .12); }
+    .footer-bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1.4rem; padding-top: 1.2rem; font-family: var(--sans); font-size: .55rem; letter-spacing: .05em; color: var(--muted-dim); }
+    .footer-bottom .study { color: rgba(85, 207, 245, .85); }
+
+    /* ---------- Toast ---------- */
+    .toast {
+      position: fixed; left: 1.25rem; bottom: 1.25rem; z-index: 60;
+      display: flex; align-items: center; gap: .7rem; max-width: min(24rem, calc(100vw - 2.5rem));
+      padding: .8rem 1rem; border-radius: .9rem;
+      background: rgba(11, 19, 34, .9); border: 1px solid rgba(85, 207, 245, .45);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 20px 44px -20px rgba(0, 0, 0, .9), 0 0 24px rgba(85, 207, 245, .12);
+      transform: translateY(140%); opacity: 0; transition: transform .3s ease, opacity .3s ease;
       pointer-events: none;
-      width: 450px;
-      height: 450px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(85, 207, 245, 0.14) 0%, rgba(255, 111, 50, 0.08) 40%, rgba(0,0,0,0) 70%);
-      transform: translate(-50%, -50%);
-      transition: transform 0.1s ease-out, opacity 0.3s ease;
-      z-index: 1;
+    }
+    .toast.is-visible { transform: translateY(0); opacity: 1; }
+    .toast > i { color: var(--brand-cyan); font-size: .85rem; }
+    .toast strong { display: block; font-size: .7rem; font-weight: 600; }
+    .toast span { display: block; margin-top: .1rem; font-family: var(--sans); font-size: .55rem; color: var(--muted); word-break: break-all; }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 1000px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .aside-note { text-align: left; }
+      .exec-grid { grid-template-columns: 1fr; }
+      .exec-card { min-height: 0; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 900px) {
+      .site-nav { display: none; }
+      .nav-cta .btn-glass { display: none; }
+      .menu-toggle { display: grid; }
+      .register-head { display: none; }
+      .register-row { grid-template-columns: 2rem 1fr auto; grid-template-areas: "id person copy" ". committee committee" ". email email"; row-gap: .45rem; align-items: start; }
+      .register-row .reg-id { grid-area: id; padding-top: .4rem; }
+      .register-row .reg-person { grid-area: person; }
+      .register-row .reg-committee { grid-area: committee; padding-left: 2.85rem; }
+      .register-row .reg-email { grid-area: email; padding-left: 2.85rem; }
+      .register-row .reg-copy { grid-area: copy; }
+      .adviser { grid-template-columns: auto 1fr; }
+      .adviser-contact { grid-column: 1 / -1; }
+    }
+    @media (max-width: 620px) {
+      .nav-cta .btn { display: none; }
+      .brand-sub { display: none; }
+      .brand-name { white-space: nowrap; }
+      .nav-shell { padding: .5rem .7rem; }
+    }
+    @media (max-width: 760px) {
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      .mech-row { grid-template-columns: 2.2rem 1fr 2.2rem; }
+      .mech-tag { display: inline-block; margin: .35rem 0 0; }
+      .dir-toolbar { align-items: flex-start; }
+      .dir-search { width: 100%; }
+      .footer-top { grid-template-columns: 1fr; gap: 1.8rem; }
+      .section-meta { text-align: left; }
+      .site-header { padding: .7rem .6rem .4rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .ticker-track { animation: none; }
     }
   </style>
 </head>
-<body class="relative min-h-screen text-slate-100 antialiased selection:bg-brandCyan/30 selection:text-brandCyan">
+<body>
 
-  <!-- Interactive Light Follower -->
-  <div id="cursor-light" class="hidden md:block"></div>
+  <div class="ambient" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
 
-  <!-- Ambient Glowing Background Orbs -->
-  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-    <div class="absolute -top-40 -left-40 w-[32rem] h-[32rem] bg-brandCyan/20 rounded-full blur-[140px] animate-float-1"></div>
-    <div class="absolute top-1/3 -right-40 w-[34rem] h-[34rem] bg-brandTeal/20 rounded-full blur-[150px] animate-float-2"></div>
-    <div class="absolute top-2/3 left-10 w-96 h-96 bg-brandOrange/20 rounded-full blur-[130px] animate-pulse-glow"></div>
-    <div class="absolute -bottom-40 right-1/4 w-[30rem] h-[30rem] bg-brandAmber/20 rounded-full blur-[140px] animate-float-1"></div>
+  <!-- CAMPUS BRIEF STRIP -->
+  <div class="brief-bar">
+    <div class="wrap">
+      <span><strong>Batangas State University</strong> · The National Engineering University · ARASOF-Nasugbu</span>
+      <span class="brief-links">
+        <a href="mailto:sscnasugbu@g.batstate-u.edu.ph"><i class="fa-solid fa-envelope"></i> sscnasugbu@g.batstate-u.edu.ph</a>
+        <a href="tel:+63434160350"><i class="fa-solid fa-phone"></i> +63 43 416 0350</a>
+      </span>
+    </div>
   </div>
 
-  <!-- Main Application Wrapper -->
-  <div class="relative z-10 flex flex-col min-h-screen">
-
-    <!-- TOP ANNOUNCEMENT & CONTACT BAR -->
-    <div class="bg-gradient-to-r from-darkBase via-darkSurface to-darkBase border-b border-white/10 text-xs py-2 px-4 sm:px-8">
-      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-slate-300">
-        <div class="flex items-center gap-4 overflow-x-auto max-w-full">
-          <span class="flex items-center gap-1.5 text-brandCyan">
-            <i class="fa-solid fa-graduation-cap"></i>
-            <span class="font-semibold text-white">Batangas State University</span> - The National Engineering University
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="wrap">
+      <div class="nav-shell">
+        <a href="#top" class="brand" aria-label="DALUYAN SSC-UIM home">
+          <span class="brand-mark" aria-hidden="true"><span><i class="fa-solid fa-shield-halved"></i></span></span>
+          <span>
+            <span class="brand-name">DALUYAN</span>
+            <span class="brand-sub">SSC-UIM · Council Portal</span>
           </span>
-          <span class="hidden md:inline text-slate-600">|</span>
-          <span class="hidden md:inline text-slate-400">ARASOF-Nasugbu Campus</span>
-        </div>
-        <div class="flex items-center gap-4 text-[11px] font-mono">
-          <a href="mailto:sscnasugbu@g.batstate-u.edu.ph" class="hover:text-brandCyan transition-colors flex items-center gap-1">
-            <i class="fa-solid fa-envelope text-brandOrange"></i>
-            <span>sscnasugbu@g.batstate-u.edu.ph</span>
-          </a>
-          <span class="text-slate-600">|</span>
-          <span class="hidden sm:inline flex items-center gap-1">
-            <i class="fa-solid fa-phone text-brandAmber"></i>
-            <span>+63 43 416 0350 loc. 218</span>
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <!-- MAIN STICKY NAVIGATION BAR -->
-    <header class="sticky top-0 z-50 px-4 sm:px-8 py-3 transition-all duration-300" id="navbar">
-      <nav class="max-w-7xl mx-auto glass-panel rounded-2xl px-5 py-3 flex items-center justify-between">
-        
-        <!-- Brand Logo & Campus Badge -->
-        <a href="#" class="flex items-center gap-3.5 group">
-          <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brandCyan via-brandOrange to-brandAmber p-[2px] shadow-lg shadow-brandCyan/20">
-            <div class="w-full h-full bg-darkBase rounded-[10px] flex items-center justify-center relative overflow-hidden">
-              <i class="fa-solid fa-shield-halved text-brandCyan text-xl group-hover:scale-110 transition-transform"></i>
-            </div>
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="text-xl sm:text-2xl font-extrabold tracking-tight text-gradient-brand">DALUYAN</span>
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brandCyan/20 text-brandCyan border border-brandCyan/30">SSC-UIM</span>
-            </div>
-            <p class="text-[10px] text-slate-400 font-medium tracking-wide">Supreme Student Council - ARASOF-Nasugbu • Unified Internal Mechanism</p>
-          </div>
         </a>
 
-        <!-- Desktop Navigation Links -->
-        <div class="hidden lg:flex items-center space-x-7 text-xs font-semibold">
-          <a href="#hero" class="hover:text-brandCyan transition-colors">Home</a>
-          <a href="#leadership" class="hover:text-brandCyan transition-colors">Executive Leadership</a>
-          <a href="#directory" class="hover:text-brandCyan transition-colors">Committees</a>
-          <a href="mechanism-tools.html" class="hover:text-brandCyan transition-colors">Mechanism Tools</a>
-          <a href="login.html" class="hover:text-brandCyan transition-colors text-brandCyan"><i class="fa-solid fa-arrow-right-to-bracket mr-1"></i>Sign In</a>
-          <a href="http://www.batstate-u.edu.ph" target="_blank" rel="noopener" class="hover:text-brandCyan transition-colors flex items-center gap-1">
-            <span>University Site</span>
-            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-          </a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="#leadership">Leadership</a>
+          <a href="#directory">Directory</a>
+          <a href="#mechanisms">Mechanisms</a>
+          <a href="login.html" class="nav-signin"><i class="fa-solid fa-arrow-right-to-bracket" aria-hidden="true"></i> Sign in</a>
+        </nav>
+
+        <div class="nav-cta">
+          <a href="mechanism-tools.html" class="btn btn-primary">Open workspace <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+          <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobile-nav">
+            <i class="fa-solid fa-bars" id="menu-icon" aria-hidden="true"></i>
+          </button>
         </div>
-
-        <!-- Mobile Menu Toggle -->
-        <button id="mobile-menu-btn" class="lg:hidden text-slate-300 hover:text-white p-2" aria-label="Toggle Navigation">
-          <i class="fa-solid fa-bars text-xl" id="menu-icon"></i>
-        </button>
-      </nav>
-
-      <!-- Mobile Dropdown Navigation -->
-      <div id="mobile-menu" class="hidden lg:hidden max-w-7xl mx-auto mt-3 glass-panel rounded-2xl p-6 flex-col gap-4 text-center">
-        <a href="#hero" class="py-2 text-slate-200 hover:text-brandCyan border-b border-white/5" onclick="toggleMobileMenu()">Home</a>
-        <a href="#leadership" class="py-2 text-slate-200 hover:text-brandCyan border-b border-white/5" onclick="toggleMobileMenu()">Executive Leadership</a>
-        <a href="#directory" class="py-2 text-slate-200 hover:text-brandCyan border-b border-white/5" onclick="toggleMobileMenu()">Committee Directory</a>
-        <a href="mechanism-tools.html" class="py-2 text-slate-200 hover:text-brandCyan border-b border-white/5" onclick="toggleMobileMenu()">Mechanism Tools</a>
-        <a href="login.html" class="py-2 text-brandCyan border-b border-white/5" onclick="toggleMobileMenu()"><i class="fa-solid fa-arrow-right-to-bracket mr-2"></i>Sign In</a>
-        <a href="http://www.batstate-u.edu.ph" target="_blank" class="py-2 text-slate-200 hover:text-brandCyan border-b border-white/5" onclick="toggleMobileMenu()">University Site</a>
       </div>
-    </header>
 
-
-    <!-- HERO SECTION -->
-    <section id="hero" class="relative pt-10 pb-16 md:pt-16 md:pb-24 px-4 sm:px-8">
-      <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-10 items-center">
-        
-        <!-- Hero Text & Overview -->
-        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-          
-          <!-- Badges -->
-          <div class="inline-flex flex-wrap items-center justify-center lg:justify-start gap-2">
-            <span class="px-3 py-1 rounded-full glass-card text-xs font-semibold text-brandCyan border-brandCyan/30">
-              <i class="fa-solid fa-landmark mr-1.5"></i>BatStateU ARASOF-Nasugbu
-            </span>
-            <span class="px-3 py-1 rounded-full glass-card text-xs font-bold text-gradient-warm border-brandOrange/30">
-              <i class="fa-solid fa-heart mr-1.5"></i>Puso, Dedikasyon, at Talino
-            </span>
-          </div>
-
-          <!-- Main Title -->
-          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15]">
-            Unified Internal Mechanism <br class="hidden sm:block">
-            <span class="text-gradient-brand">DALUYAN Portal</span>
-          </h1>
-
-          <!-- Tagline Subtitle -->
-          <p class="text-slate-300 text-sm sm:text-lg font-light leading-relaxed max-w-2xl mx-auto lg:mx-0">
-            "Leading Innovations, Transforming Lives, Building the Nation." <br class="hidden sm:block">
-            The central digital governance workspace of the Supreme Student Council - ARASOF-Nasugbu — streamlining archival records, financial management, procurement logistics, and community linkages.
-          </p>
-
-          <!-- Quick Metric Badges -->
-          <div class="pt-6 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto lg:mx-0">
-            <div class="glass-card p-3 rounded-2xl text-center lg:text-left">
-              <p class="text-2xl font-bold text-brandCyan">4</p>
-              <p class="text-[11px] text-slate-400 mt-0.5">Core Committees</p>
-            </div>
-            <div class="glass-card p-3 rounded-2xl text-center lg:text-left">
-              <p class="text-2xl font-bold text-brandOrange">20+</p>
-              <p class="text-[11px] text-slate-400 mt-0.5">Council Leaders</p>
-            </div>
-            <div class="glass-card p-3 rounded-2xl text-center lg:text-left">
-              <p class="text-2xl font-bold text-brandAmber">100%</p>
-              <p class="text-[11px] text-slate-400 mt-0.5">G-Suite Verified</p>
-            </div>
-            <div class="glass-card p-3 rounded-2xl text-center lg:text-left">
-              <p class="text-2xl font-bold text-emerald-400">Active</p>
-              <p class="text-[11px] text-slate-400 mt-0.5">Internal Mechanism</p>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Mechanism Tools Page Link -->
-        <div class="lg:col-span-5 relative">
-          <a href="mechanism-tools.html" class="glass-panel rounded-3xl p-8 sm:p-10 min-h-64 flex flex-col justify-between border-white/20 shadow-2xl group">
-            <div class="flex items-center justify-between">
-              <span class="w-3 h-3 rounded-full bg-brandCyan"></span>
-              <i class="fa-solid fa-arrow-up-right-from-square text-brandCyan"></i>
-            </div>
-            <div class="space-y-3">
-              <div class="w-12 h-12 rounded-2xl bg-brandCyan/20 text-brandCyan flex items-center justify-center text-xl">
-                <i class="fa-solid fa-layer-group"></i>
-              </div>
-              <h2 class="text-xl font-bold text-white group-hover:text-brandCyan transition-colors">Mechanism Tools</h2>
-              <p class="text-xs text-slate-400">Open the SSC-UIM service workspace</p>
-            </div>
-          </a>
-        </div>
-
-        <!-- Legacy Mechanism Card Markup -->
-        <div class="hidden">
-          
-          <div class="glass-panel rounded-3xl p-6 sm:p-8 space-y-6 border-white/20 shadow-2xl relative z-20">
-            
-            <div class="flex items-center justify-between pb-4 border-b border-white/10">
-              <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-red-400"></span>
-                <span class="w-3 h-3 rounded-full bg-brandAmber"></span>
-                <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
-              </div>
-              <span class="text-[11px] font-mono text-brandCyan bg-white/5 px-3 py-1 rounded-full border border-white/10">SSC-UIM System Active</span>
-            </div>
-
-            <!-- Quick Service Cards -->
-            <div class="space-y-3.5">
-              
-              <div onclick="openMechanismModal('dtn')" class="glass-card p-4 rounded-2xl flex items-center justify-between cursor-pointer group">
-                <div class="flex items-center gap-3.5">
-                  <div class="w-10 h-10 rounded-xl bg-brandCyan/20 text-brandCyan flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-folder-tree"></i>
-                  </div>
-                  <div>
-                    <h4 class="text-xs font-bold text-white group-hover:text-brandCyan transition-colors">DTN Request Generator</h4>
-                    <p class="text-[10px] text-slate-400">Document Tracking & Records Security (CommAIRS)</p>
-                  </div>
-                </div>
-                <i class="fa-solid fa-angle-right text-xs text-slate-500 group-hover:translate-x-1 transition-transform"></i>
-              </div>
-
-              <div onclick="openMechanismModal('duty')" class="glass-card p-4 rounded-2xl flex items-center justify-between cursor-pointer group">
-                <div class="flex items-center gap-3.5">
-                  <div class="w-10 h-10 rounded-xl bg-brandOrange/20 text-brandOrange flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                  </div>
-                  <div>
-                    <h4 class="text-xs font-bold text-white group-hover:text-brandOrange transition-colors">Event Duty Tracker</h4>
-                    <p class="text-[10px] text-slate-400">Log officer shift attendance & venue duty</p>
-                  </div>
-                </div>
-                <i class="fa-solid fa-angle-right text-xs text-slate-500 group-hover:translate-x-1 transition-transform"></i>
-              </div>
-
-              <div onclick="openMechanismModal('leave')" class="glass-card p-4 rounded-2xl flex items-center justify-between cursor-pointer group">
-                <div class="flex items-center gap-3.5">
-                  <div class="w-10 h-10 rounded-xl bg-brandAmber/20 text-brandAmber flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-envelope-open-text"></i>
-                  </div>
-                  <div>
-                    <h4 class="text-xs font-bold text-white group-hover:text-brandAmber transition-colors">Filing of Leave of Absence</h4>
-                    <p class="text-[10px] text-slate-400">Submit formal leave requests to SecGen</p>
-                  </div>
-                </div>
-                <i class="fa-solid fa-angle-right text-xs text-slate-500 group-hover:translate-x-1 transition-transform"></i>
-              </div>
-
-              <div onclick="openMechanismModal('report')" class="glass-card p-4 rounded-2xl flex items-center justify-between cursor-pointer group">
-                <div class="flex items-center gap-3.5">
-                  <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-file-invoice"></i>
-                  </div>
-                  <div>
-                    <h4 class="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors">Consolidated Attendance Report</h4>
-                    <p class="text-[10px] text-slate-400">Review weekly council compliance statistics</p>
-                  </div>
-                </div>
-                <i class="fa-solid fa-angle-right text-xs text-slate-500 group-hover:translate-x-1 transition-transform"></i>
-              </div>
-
-            </div>
-
-            <!-- Campus Address Tagline Footnote -->
-            <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-400 text-center">
-              <i class="fa-solid fa-location-dot text-brandOrange mr-1"></i> R. Martinez St. Brgy. Bucana, Nasugbu, Batangas
-            </div>
-
-          </div>
-
-        </div>
-
+      <div class="mobile-nav" id="mobile-nav">
+        <a href="#leadership">Leadership</a>
+        <a href="#directory">Committee Directory</a>
+        <a href="#mechanisms">Mechanism Tools</a>
+        <a href="mechanism-tools.html">Open workspace</a>
+        <a href="login.html">Sign in</a>
+        <a href="http://www.batstate-u.edu.ph" target="_blank" rel="noopener">University site ↗</a>
       </div>
-    </section>
+    </div>
+  </header>
 
+  <main id="top">
 
-    <!-- EXECUTIVE LEADERSHIP & ADVISER SHOWCASE SECTION -->
-    <section id="leadership" class="py-16 px-4 sm:px-8 relative">
-      <div class="max-w-7xl mx-auto space-y-12">
-        
-        <!-- Header -->
-        <div class="text-center max-w-3xl mx-auto space-y-3">
-          <span class="text-xs font-bold uppercase tracking-widest text-brandCyan">Executive Guidance</span>
-          <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Council Leadership & Adviser</h2>
-          <p class="text-slate-400 text-sm font-light">
-            Guiding the Supreme Student Council - ARASOF-Nasugbu towards innovation, integrity, and student welfare.
-          </p>
-        </div>
-
-        <!-- Adviser Banner Card -->
-        <div class="glass-panel rounded-3xl p-6 sm:p-8 max-w-4xl mx-auto border-brandAmber/40 relative overflow-hidden">
-          <div class="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
-            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-tr from-brandOrange to-brandAmber p-[3px] shrink-0 shadow-lg shadow-brandOrange/20">
-              <div class="w-full h-full bg-darkBase rounded-[13px] flex items-center justify-center text-3xl text-brandAmber">
-                <i class="fa-solid fa-user-tie"></i>
-              </div>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div>
+            <div class="hero-badges">
+              <span class="badge"><i class="fa-solid fa-landmark" aria-hidden="true"></i> BatStateU ARASOF-Nasugbu</span>
+              <span class="badge is-warm"><i class="fa-solid fa-heart" aria-hidden="true"></i> Puso, Dedikasyon, at Talino</span>
             </div>
-            <div class="space-y-1.5 flex-1">
-              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brandAmber/20 text-brandAmber text-[11px] font-bold border border-brandAmber/30 mb-1">
-                <i class="fa-solid fa-award"></i> SSC Faculty Adviser
-              </div>
-              <h3 class="text-xl sm:text-2xl font-bold text-white">Dr. Dyemnah Inasiah P. Bentir</h3>
-              <p class="text-xs text-slate-400">Adviser • Supreme Student Council - ARASOF-Nasugbu</p>
-              <div class="pt-2 flex items-center justify-center sm:justify-start gap-2">
-                <a href="mailto:dyemnahinasiah.bentir@g.batstate-u.edu.ph" class="text-xs text-brandCyan hover:underline font-mono flex items-center gap-1.5">
-                  <i class="fa-solid fa-envelope"></i>
-                  <span>dyemnahinasiah.bentir@g.batstate-u.edu.ph</span>
-                </a>
-                <button onclick="copyToClipboard('dyemnahinasiah.bentir@g.batstate-u.edu.ph')" class="p-1.5 text-xs text-slate-400 hover:text-white glass-card rounded-lg" title="Copy Email">
-                  <i class="fa-regular fa-copy"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Higher Executives Horizontal Glass Grid -->
-        <div>
-          <div class="text-center mb-6">
-            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300">Higher Executive Officers</h3>
-          </div>
-
-          <div class="grid md:grid-cols-3 gap-6">
-            
-            <!-- President -->
-            <div class="glass-card rounded-3xl p-6 space-y-4 border-brandCyan/40 flex flex-col justify-between group">
-              <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brandCyan to-brandTeal p-[2px] shadow-md">
-                    <div class="w-full h-full bg-darkBase rounded-[14px] flex items-center justify-center text-xl text-brandCyan">
-                      <i class="fa-solid fa-crown"></i>
-                    </div>
-                  </div>
-                  <span class="px-3 py-1 rounded-full text-[10px] font-extrabold bg-brandCyan/20 text-brandCyan border border-brandCyan/30">PRESIDENT</span>
-                </div>
-                <div>
-                  <h4 class="text-lg font-bold text-white group-hover:text-brandCyan transition-colors">JC Zylene Castillo Villacrusis</h4>
-                  <p class="text-xs text-slate-400 mt-1">Council President • SSC-UIM Executive</p>
-                </div>
-              </div>
-
-              <div class="pt-4 border-t border-white/10 flex items-center justify-between text-xs">
-                <span class="font-mono text-slate-300 truncate max-w-[180px]" title="24-71097@g.batstate-u.edu.ph">24-71097@g.batstate-u.edu.ph</span>
-                <button onclick="copyToClipboard('24-71097@g.batstate-u.edu.ph')" class="glass-button-secondary px-3 py-1.5 rounded-xl text-[11px] font-semibold text-brandCyan flex items-center gap-1">
-                  <i class="fa-regular fa-copy"></i>
-                  <span>Copy</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- VP Internal -->
-            <div class="glass-card rounded-3xl p-6 space-y-4 border-brandOrange/40 flex flex-col justify-between group">
-              <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brandOrange to-brandAmber p-[2px] shadow-md">
-                    <div class="w-full h-full bg-darkBase rounded-[14px] flex items-center justify-center text-xl text-brandOrange">
-                      <i class="fa-solid fa-building-user"></i>
-                    </div>
-                  </div>
-                  <span class="px-3 py-1 rounded-full text-[10px] font-extrabold bg-brandOrange/20 text-brandOrange border border-brandOrange/30">VP INTERNAL</span>
-                </div>
-                <div>
-                  <h4 class="text-lg font-bold text-white group-hover:text-brandOrange transition-colors">Mark Regan Carandang Derain</h4>
-                  <p class="text-xs text-slate-400 mt-1">Vice President for Internal Affairs</p>
-                </div>
-              </div>
-
-              <div class="pt-4 border-t border-white/10 flex items-center justify-between text-xs">
-                <span class="font-mono text-slate-300 truncate max-w-[180px]" title="23-70259@g.batstate-u.edu.ph">23-70259@g.batstate-u.edu.ph</span>
-                <button onclick="copyToClipboard('23-70259@g.batstate-u.edu.ph')" class="glass-button-secondary px-3 py-1.5 rounded-xl text-[11px] font-semibold text-brandOrange flex items-center gap-1">
-                  <i class="fa-regular fa-copy"></i>
-                  <span>Copy</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- VP External -->
-            <div class="glass-card rounded-3xl p-6 space-y-4 border-brandAmber/40 flex flex-col justify-between group">
-              <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brandAmber to-emerald-400 p-[2px] shadow-md">
-                    <div class="w-full h-full bg-darkBase rounded-[14px] flex items-center justify-center text-xl text-brandAmber">
-                      <i class="fa-solid fa-globe"></i>
-                    </div>
-                  </div>
-                  <span class="px-3 py-1 rounded-full text-[10px] font-extrabold bg-brandAmber/20 text-brandAmber border border-brandAmber/30">VP EXTERNAL</span>
-                </div>
-                <div>
-                  <h4 class="text-lg font-bold text-white group-hover:text-brandAmber transition-colors">Saverah Jhoy H. Villafranca</h4>
-                  <p class="text-xs text-slate-400 mt-1">Vice President for External Affairs</p>
-                </div>
-              </div>
-
-              <div class="pt-4 border-t border-white/10 flex items-center justify-between text-xs">
-                <span class="font-mono text-slate-300 truncate max-w-[180px]" title="23-74736@g.batstate-u.edu.ph">23-74736@g.batstate-u.edu.ph</span>
-                <button onclick="copyToClipboard('23-74736@g.batstate-u.edu.ph')" class="glass-button-secondary px-3 py-1.5 rounded-xl text-[11px] font-semibold text-brandAmber flex items-center gap-1">
-                  <i class="fa-regular fa-copy"></i>
-                  <span>Copy</span>
-                </button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- COMMITTEE DIRECTORY & INTERACTIVE HUB SECTION -->
-    <section id="directory" class="hidden py-16 px-4 sm:px-8 relative">
-      <div class="max-w-7xl mx-auto space-y-10">
-        
-        <!-- Section Header -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div class="space-y-2 max-w-2xl">
-            <span class="text-xs font-bold uppercase tracking-widest text-brandOrange">Council Governance</span>
-            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Interactive Committee Directory</h2>
-            <p class="text-slate-400 text-sm font-light">
-              Filter by committee structure, search officers by name or G-Suite email address, and copy official contact credentials directly.
+            <h1>Unified Internal Mechanism<br><span class="grad-brand">DALUYAN Portal</span></h1>
+            <p class="hero-lead">
+              The central digital governance workspace of the Supreme Student Council — streamlining
+              <strong>archival records</strong>, <strong>financial management</strong>,
+              <strong>procurement logistics</strong>, and <strong>community linkages</strong> in one council register.
             </p>
-          </div>
-
-          <!-- Total Counter -->
-          <div class="glass-card px-4 py-2 rounded-2xl flex items-center gap-3 self-start">
-            <i class="fa-solid fa-users text-brandCyan text-lg"></i>
-            <div>
-              <p class="text-[10px] text-slate-400 uppercase font-semibold">Directory Total</p>
-              <p class="text-sm font-bold text-white" id="directory-count-display">Showing 20 Council Members</p>
+            <div class="hero-actions">
+              <a href="mechanism-tools.html" class="btn btn-primary">Enter mechanism tools <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+              <a href="login.html" class="btn btn-glass">Sign in with university account</a>
             </div>
+            <p class="hero-meta"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> University-verified sign-in · G-Suite accounts only</p>
+          </div>
+
+          <div>
+            <div class="index-card">
+              <div class="index-head">
+                <div>
+                  <p>Council index · 2026</p>
+                  <h2>Four protocols, one workspace</h2>
+                </div>
+                <span class="seal" aria-hidden="true"><span><i class="fa-solid fa-layer-group"></i></span></span>
+              </div>
+
+              <ul class="index-list">
+                <li><a href="mechanism-tools.html?tool=dtn">
+                  <span class="index-num">01</span>
+                  <span>
+                    <span class="index-name">Document Tracking Number</span>
+                    <span class="index-desc">CommAIRS · archival &amp; records</span>
+                  </span>
+                  <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                </a></li>
+                <li><a href="mechanism-tools.html?tool=duty">
+                  <span class="index-num">02</span>
+                  <span>
+                    <span class="index-name">Event Duty Tracker</span>
+                    <span class="index-desc">Council operations · attendance</span>
+                  </span>
+                  <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                </a></li>
+                <li><a href="mechanism-tools.html?tool=leave">
+                  <span class="index-num">03</span>
+                  <span>
+                    <span class="index-name">Leave of Absence</span>
+                    <span class="index-desc">Administrative filing · SecGen</span>
+                  </span>
+                  <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                </a></li>
+                <li><a href="mechanism-tools.html?tool=report">
+                  <span class="index-num">04</span>
+                  <span>
+                    <span class="index-name">Attendance Report</span>
+                    <span class="index-desc">Council-wide · weekly summary</span>
+                  </span>
+                  <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                </a></li>
+              </ul>
+
+              <div class="index-foot">
+                <span><i class="fa-solid fa-location-dot" aria-hidden="true"></i> R. Martinez St., Bucana, Nasugbu</span>
+                <span>Est. 2026</span>
+              </div>
+            </div>
+            <p class="aside-note">Puso · Dedikasyon · Talino</p>
           </div>
         </div>
 
-        <!-- Filter Tabs & Search Controls -->
-        <div class="glass-panel rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          
-          <!-- Tab Filters -->
-          <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
-            <button onclick="filterCommittee('all')" id="tab-all" class="px-4 py-2 rounded-xl text-xs font-semibold bg-brandCyan text-darkBase transition-all whitespace-nowrap">
-              All Committees
-            </button>
-            <button onclick="filterCommittee('CommAIRS')" id="tab-CommAIRS" class="px-4 py-2 rounded-xl text-xs font-semibold glass-button-secondary text-slate-300 hover:text-white transition-all whitespace-nowrap">
-              CommAIRS
-            </button>
-            <button onclick="filterCommittee('CommCREL')" id="tab-CommCREL" class="px-4 py-2 rounded-xl text-xs font-semibold glass-button-secondary text-slate-300 hover:text-white transition-all whitespace-nowrap">
-              CommCREL
-            </button>
-            <button onclick="filterCommittee('CommFIMA')" id="tab-CommFIMA" class="px-4 py-2 rounded-xl text-xs font-semibold glass-button-secondary text-slate-300 hover:text-white transition-all whitespace-nowrap">
-              CommFIMA
-            </button>
-            <button onclick="filterCommittee('CommPROL')" id="tab-CommPROL" class="px-4 py-2 rounded-xl text-xs font-semibold glass-button-secondary text-slate-300 hover:text-white transition-all whitespace-nowrap">
-              CommPROL
-            </button>
-            <button onclick="filterCommittee('Executives')" id="tab-Executives" class="px-4 py-2 rounded-xl text-xs font-semibold glass-button-secondary text-slate-300 hover:text-white transition-all whitespace-nowrap">
-              Higher Execs
-            </button>
+        <div class="stat-grid">
+          <div class="stat-card glass-card stat-cyan">
+            <p class="stat-value">04 <small>Committees</small></p>
+            <p class="stat-label">AIRS · CREL · FIMA · PROL</p>
           </div>
-
-          <!-- Directory Live Search Bar -->
-          <div class="relative w-full md:w-80">
-            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-            <input type="text" id="dir-search-input" onkeyup="handleDirectorySearch()" placeholder="Search directory..." class="w-full glass-input rounded-xl pl-9 pr-8 py-2 text-xs">
-            <button onclick="clearSearch()" id="clear-search-btn" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
+          <div class="stat-card glass-card stat-orange">
+            <p class="stat-value">27 <small>Officers</small></p>
+            <p class="stat-label">Executive &amp; committee roster</p>
           </div>
-
-        </div>
-
-        <!-- Dynamic Committee Cards Grid -->
-        <div id="directory-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          <!-- Populated by JavaScript -->
-        </div>
-
-        <!-- Empty State Container -->
-        <div id="no-results" class="hidden glass-panel rounded-3xl p-12 text-center space-y-4 max-w-md mx-auto">
-          <div class="w-16 h-16 rounded-full bg-white/5 mx-auto flex items-center justify-center text-2xl text-slate-400">
-            <i class="fa-solid fa-user-slash"></i>
+          <div class="stat-card glass-card stat-amber">
+            <p class="stat-value">04 <small>Protocols</small></p>
+            <p class="stat-label">Live internal mechanisms</p>
           </div>
-          <h3 class="text-lg font-bold text-white">No Council Members Found</h3>
-          <p class="text-xs text-slate-400">Try adjusting your search query or switching committee tabs.</p>
-          <button onclick="resetDirectoryFilters()" class="glass-button-cyan px-4 py-2 rounded-xl text-xs font-semibold text-darkBase">Reset All Filters</button>
+          <div class="stat-card glass-card stat-brand">
+            <p class="stat-value">100%</p>
+            <p class="stat-label">University email verified</p>
+          </div>
         </div>
-
       </div>
     </section>
 
+    <!-- TICKER -->
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span>Puso, Dedikasyon, at Talino</span>
+        <span>Leading Innovations · Transforming Lives · Building the Nation</span>
+        <span>Supreme Student Council · ARASOF-Nasugbu</span>
+        <span>Puso, Dedikasyon, at Talino</span>
+        <span>Leading Innovations · Transforming Lives · Building the Nation</span>
+        <span>Supreme Student Council · ARASOF-Nasugbu</span>
+      </div>
+    </div>
 
-    <!-- INTEGRATED MECHANISM TOOLS & SERVICES SHOWCASE -->
-    <section id="mechanisms" class="hidden py-16 px-4 sm:px-8 relative">
-      <div class="max-w-7xl mx-auto space-y-12">
-        
-        <!-- Section Header -->
-        <div class="text-center max-w-3xl mx-auto space-y-3">
-          <span class="text-xs font-bold uppercase tracking-widest text-brandAmber">Internal Mechanism Protocols</span>
-          <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">SSC-UIM Integrated Services</h2>
-          <p class="text-slate-400 text-sm font-light">
-            Empowering council officers with automated forms, real-time attendance logging, and archival document tracking.
+    <!-- LEADERSHIP -->
+    <section class="section" id="leadership">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Executive guidance</span>
+            <h2>Council leadership &amp; adviser</h2>
+            <p>Guiding the Supreme Student Council toward innovation, integrity, and student welfare.</p>
+          </div>
+          <div class="section-meta">Office of the President<b>ARASOF-Nasugbu</b></div>
+        </div>
+
+        <div class="adviser">
+          <span class="adviser-icon" aria-hidden="true"><i class="fa-solid fa-user-tie"></i></span>
+          <div>
+            <p class="adviser-role"><i class="fa-solid fa-award" aria-hidden="true"></i> SSC Faculty Adviser</p>
+            <h3>Dr. Dyemnah Inasiah P. Bentir</h3>
+            <p>Adviser · Supreme Student Council, ARASOF-Nasugbu</p>
+          </div>
+          <div class="adviser-contact">
+            <a class="contact-line" href="mailto:dyemnahinasiah.bentir@g.batstate-u.edu.ph">dyemnahinasiah.bentir@g.batstate-u.edu.ph</a>
+            <button type="button" class="copy-btn" data-copy="dyemnahinasiah.bentir@g.batstate-u.edu.ph" aria-label="Copy adviser email" title="Copy email"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <div class="exec-grid">
+          <article class="exec-card exec-cyan">
+            <div class="exec-top">
+              <span class="exec-icon" aria-hidden="true"><i class="fa-solid fa-crown"></i></span>
+              <span class="role-pill">President</span>
+            </div>
+            <h4>JC Zylene Castillo Villacrusis</h4>
+            <p class="exec-note">Council President · SSC-UIM Executive</p>
+            <div class="exec-foot">
+              <span class="mail" title="24-71097@g.batstate-u.edu.ph">24-71097@g.batstate-u.edu.ph</span>
+              <button type="button" class="copy-btn" data-copy="24-71097@g.batstate-u.edu.ph" aria-label="Copy president email" title="Copy email"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+            </div>
+          </article>
+
+          <article class="exec-card exec-orange">
+            <div class="exec-top">
+              <span class="exec-icon" aria-hidden="true"><i class="fa-solid fa-building-user"></i></span>
+              <span class="role-pill">VP · Internal</span>
+            </div>
+            <h4>Mark Regan Carandang Derain</h4>
+            <p class="exec-note">Vice President for Internal Affairs</p>
+            <div class="exec-foot">
+              <span class="mail" title="23-70259@g.batstate-u.edu.ph">23-70259@g.batstate-u.edu.ph</span>
+              <button type="button" class="copy-btn" data-copy="23-70259@g.batstate-u.edu.ph" aria-label="Copy VP internal email" title="Copy email"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+            </div>
+          </article>
+
+          <article class="exec-card exec-amber">
+            <div class="exec-top">
+              <span class="exec-icon" aria-hidden="true"><i class="fa-solid fa-globe"></i></span>
+              <span class="role-pill">VP · External</span>
+            </div>
+            <h4>Saverah Jhoy H. Villafranca</h4>
+            <p class="exec-note">Vice President for External Affairs</p>
+            <div class="exec-foot">
+              <span class="mail" title="23-74736@g.batstate-u.edu.ph">23-74736@g.batstate-u.edu.ph</span>
+              <button type="button" class="copy-btn" data-copy="23-74736@g.batstate-u.edu.ph" aria-label="Copy VP external email" title="Copy email"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIRECTORY -->
+    <section class="section" id="directory">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Council governance</span>
+            <h2>Committee register</h2>
+            <p>Every officer, committee, and official G-Suite contact in one searchable register.</p>
+          </div>
+          <div class="section-meta">Directory total<b id="directory-count">27 officers</b></div>
+        </div>
+
+        <div class="dir-shell">
+          <div class="dir-toolbar">
+            <div class="dir-tabs" role="tablist" aria-label="Filter by committee">
+              <button type="button" role="tab" aria-selected="true" data-category="all">All</button>
+              <button type="button" role="tab" aria-selected="false" data-category="Executives">Executives</button>
+              <button type="button" role="tab" aria-selected="false" data-category="CommAIRS">CommAIRS</button>
+              <button type="button" role="tab" aria-selected="false" data-category="CommCREL">CommCREL</button>
+              <button type="button" role="tab" aria-selected="false" data-category="CommFIMA">CommFIMA</button>
+              <button type="button" role="tab" aria-selected="false" data-category="CommPROL">CommPROL</button>
+            </div>
+            <label class="dir-search" for="directory-search">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              <input id="directory-search" type="search" placeholder="Search name, role, or email…" autocomplete="off">
+              <button type="button" id="clear-search" aria-label="Clear search" hidden><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+            </label>
+          </div>
+
+          <div class="register-head" aria-hidden="true">
+            <span>No.</span><span>Officer</span><span>Committee</span><span>University email</span><span></span>
+          </div>
+
+          <ul class="register" id="directory-list" aria-live="polite"></ul>
+
+          <div class="dir-empty" id="directory-empty">
+            <h3>No officers found</h3>
+            <p>Try another name, committee, or email — or reset the filters.</p>
+            <button type="button" class="btn btn-glass" id="reset-filters">Reset filters</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MECHANISMS -->
+    <section class="section" id="mechanisms">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow is-warm">Internal mechanism protocols</span>
+            <h2>Council services</h2>
+            <p>Automated forms, live attendance logging, and archival document tracking for every committee.</p>
+          </div>
+          <div class="section-meta">Workspace<b>4 active protocols</b></div>
+        </div>
+
+        <div class="mech-list">
+          <a class="mech-row" href="mechanism-tools.html?tool=dtn">
+            <span class="mech-num">01</span>
+            <span class="mech-body">
+              <h3>Document Tracking Number <span class="mech-tag">CommAIRS</span></h3>
+              <p>Generate an official DTN for any council communication, routed to the SecGen and the archives vault.</p>
+            </span>
+            <span class="mech-arrow" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+
+          <a class="mech-row" href="mechanism-tools.html?tool=duty">
+            <span class="mech-num">02</span>
+            <span class="mech-body">
+              <h3>Event Duty Tracker <span class="mech-tag">Operations</span></h3>
+              <p>Log check-in and check-out timestamps for campus events, assemblies, and committee shifts.</p>
+            </span>
+            <span class="mech-arrow" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+
+          <a class="mech-row" href="mechanism-tools.html?tool=leave">
+            <span class="mech-num">03</span>
+            <span class="mech-body">
+              <h3>Leave of Absence <span class="mech-tag">Administrative</span></h3>
+              <p>File a formal LOA with committee, inclusive dates, and justification for head review.</p>
+            </span>
+            <span class="mech-arrow" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+
+          <a class="mech-row" href="mechanism-tools.html?tool=report">
+            <span class="mech-num">04</span>
+            <span class="mech-body">
+              <h3>Attendance Report <span class="mech-tag">Council-wide</span></h3>
+              <p>Review weekly duty hours and participation across CommAIRS, CommCREL, CommFIMA, and CommPROL.</p>
+            </span>
+            <span class="mech-arrow" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </div>
+
+        <p class="mech-note">
+          <span><i class="fa-solid fa-lock" aria-hidden="true"></i> Adviser &amp; executive reports require elevated access</span>
+          <span><i class="fa-solid fa-location-dot" aria-hidden="true"></i> R. Martinez St., Brgy. Bucana, Nasugbu, Batangas 4231</span>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <div>
+          <p class="footer-wordmark">DALUYAN<span>SSC-UIM</span></p>
+          <p class="footer-tagline">“Leading Innovations, Transforming Lives, Building the Nation.”</p>
+          <p class="footer-address">
+            Supreme Student Council · ARASOF-Nasugbu<br>
+            Batangas State University — The National Engineering University<br>
+            R. Martinez St., Brgy. Bucana, Nasugbu, Batangas, Philippines 4231
           </p>
         </div>
 
-        <!-- 4 Core Mechanism Cards -->
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          
-          <!-- Mechanism 1: DTN -->
-          <div class="glass-card rounded-3xl p-6 flex flex-col justify-between border-brandCyan/30 space-y-6 group">
-            <div class="space-y-4">
-              <div class="w-12 h-12 rounded-2xl bg-brandCyan/20 text-brandCyan flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                <i class="fa-solid fa-hashtag"></i>
-              </div>
-              <h3 class="text-lg font-bold text-white group-hover:text-brandCyan transition-colors">DTN Request Form</h3>
-              <p class="text-xs text-slate-400 leading-relaxed">
-                Generate official Document Tracking Numbers (DTN) managed directly by CommAIRS for all student council communications.
-              </p>
-            </div>
-            <button onclick="openMechanismModal('dtn')" class="w-full glass-button-cyan py-2.5 rounded-xl text-xs font-semibold text-darkBase">
-              Generate DTN
-            </button>
+        <div class="footer-col">
+          <h4>Portal</h4>
+          <ul>
+            <li><a href="#leadership">Leadership</a></li>
+            <li><a href="#directory">Committee register</a></li>
+            <li><a href="#mechanisms">Mechanism services</a></li>
+            <li><a href="login.html">Sign in</a></li>
+            <li><a href="http://www.batstate-u.edu.ph" target="_blank" rel="noopener">University website <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a></li>
+          </ul>
+          <div class="swatches" aria-label="Theme palette">
+            <span style="background:#55CFF5" title="Cyan #55CFF5"></span>
+            <span style="background:#0088B3" title="Teal #0088B3"></span>
+            <span style="background:#FF6F32" title="Orange #FF6F32"></span>
+            <span style="background:#EEA61C" title="Amber #EEA61C"></span>
           </div>
-
-          <!-- Mechanism 2: Duty Tracker -->
-          <div class="glass-card rounded-3xl p-6 flex flex-col justify-between border-brandOrange/30 space-y-6 group">
-            <div class="space-y-4">
-              <div class="w-12 h-12 rounded-2xl bg-brandOrange/20 text-brandOrange flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                <i class="fa-solid fa-user-clock"></i>
-              </div>
-              <h3 class="text-lg font-bold text-white group-hover:text-brandOrange transition-colors">Event Duty Tracker</h3>
-              <p class="text-xs text-slate-400 leading-relaxed">
-                Log active duty timestamps during campus events, student assemblies, and council committee shifts.
-              </p>
-            </div>
-            <button onclick="openMechanismModal('duty')" class="w-full glass-button-primary py-2.5 rounded-xl text-xs font-semibold text-white">
-              Log Duty Attendance
-            </button>
-          </div>
-
-          <!-- Mechanism 3: LOA -->
-          <div class="glass-card rounded-3xl p-6 flex flex-col justify-between border-brandAmber/30 space-y-6 group">
-            <div class="space-y-4">
-              <div class="w-12 h-12 rounded-2xl bg-brandAmber/20 text-brandAmber flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                <i class="fa-solid fa-file-signature"></i>
-              </div>
-              <h3 class="text-lg font-bold text-white group-hover:text-brandAmber transition-colors">Leave of Absence</h3>
-              <p class="text-xs text-slate-400 leading-relaxed">
-                Submit formal Leave of Absence applications routed to facilitating officers and committee heads.
-              </p>
-            </div>
-            <button onclick="openMechanismModal('leave')" class="w-full glass-button-secondary py-2.5 rounded-xl text-xs font-semibold text-brandAmber">
-              File Leave Form
-            </button>
-          </div>
-
-          <!-- Mechanism 4: Attendance Report -->
-          <div class="glass-card rounded-3xl p-6 flex flex-col justify-between border-emerald-500/30 space-y-6 group">
-            <div class="space-y-4">
-              <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                <i class="fa-solid fa-chart-pie"></i>
-              </div>
-              <h3 class="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">Attendance Report</h3>
-              <p class="text-xs text-slate-400 leading-relaxed">
-                View consolidated weekly attendance statistics across CommAIRS, CommCREL, CommFIMA, and CommPROL.
-              </p>
-            </div>
-            <button onclick="openMechanismModal('report')" class="w-full glass-button-secondary py-2.5 rounded-xl text-xs font-semibold text-emerald-300">
-              View Consolidated Report
-            </button>
-          </div>
-
         </div>
 
-      </div>
-    </section>
-
-
-    <!-- FOOTER -->
-    <footer class="hidden mt-auto border-t border-white/10 px-4 sm:px-8 py-10 relative z-10 bg-darkBase/80 backdrop-blur-md">
-      <div class="max-w-7xl mx-auto space-y-8">
-        
-        <div class="flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
-          
-          <!-- Campus Identity -->
-          <div class="space-y-1.5">
-            <div class="flex items-center justify-center md:justify-start gap-2.5">
-              <i class="fa-solid fa-shield-halved text-brandCyan text-lg"></i>
-              <h4 class="text-base font-bold text-white tracking-tight">Supreme Student Council - ARASOF-Nasugbu</h4>
-            </div>
-            <p class="text-xs text-slate-400">Batangas State University - The National Engineering University</p>
-            <p class="text-[11px] text-slate-500">R. Martinez St. Brgy. Bucana, Nasugbu, Batangas, Philippines 4231</p>
-          </div>
-
-          <!-- Quick Contacts & Palette Swatches -->
-          <div class="flex flex-col items-center md:items-end gap-3 text-xs">
-            <div class="flex items-center gap-2 text-[11px] text-slate-400">
-              <span>DALUYAN Theme Tokens:</span>
-              <span class="w-3.5 h-3.5 rounded-full bg-[#55CFF5]" title="Primary Cyan #55CFF5"></span>
-              <span class="w-3.5 h-3.5 rounded-full bg-[#0088B3]" title="Deep Teal #0088B3"></span>
-              <span class="w-3.5 h-3.5 rounded-full bg-[#FF6F32]" title="Vibrant Orange #FF6F32"></span>
-              <span class="w-3.5 h-3.5 rounded-full bg-[#EEA61C]" title="Warm Amber #EEA61C"></span>
-            </div>
-            <p class="text-slate-400">Official Portal: <a href="http://www.batstate-u.edu.ph" target="_blank" class="text-brandCyan hover:underline">www.batstate-u.edu.ph</a></p>
-          </div>
-
+        <div class="footer-col">
+          <h4>Council contact</h4>
+          <ul>
+            <li><a href="mailto:sscnasugbu@g.batstate-u.edu.ph"><i class="fa-solid fa-envelope" aria-hidden="true"></i> sscnasugbu@g.batstate-u.edu.ph</a></li>
+            <li><a href="tel:+63434160350"><i class="fa-solid fa-phone" aria-hidden="true"></i> +63 43 416 0350 loc. 218</a></li>
+            <li><a href="mailto:dyemnahinasiah.bentir@g.batstate-u.edu.ph"><i class="fa-solid fa-user-tie" aria-hidden="true"></i> Office of the Adviser</a></li>
+          </ul>
+          <p class="footer-address" style="margin-top:.9rem;">Puso, Dedikasyon, at Talino.</p>
         </div>
-
-        <div class="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
-          <p>© 2026 Supreme Student Council - ARASOF-Nasugbu - Unified Internal Mechanism (SSC-UIM). All Rights Reserved.</p>
-          <p class="font-mono text-slate-400">Puso, Dedikasyon, at Talino</p>
-        </div>
-
-      </div>
-    </footer>
-
-  </div>
-
-
-  <!-- DYNAMIC MODAL CONTAINER FOR MECHANISM FORMS -->
-  <div id="mechanism-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/70 backdrop-blur-md overflow-y-auto">
-    <div class="glass-panel rounded-3xl p-6 sm:p-8 max-w-2xl w-full relative border-white/20 my-8 shadow-2xl">
-      
-      <!-- Close Button -->
-      <button onclick="closeMechanismModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white p-2" aria-label="Close Modal">
-        <i class="fa-solid fa-xmark text-xl"></i>
-      </button>
-
-      <!-- Modal Title -->
-      <div class="mb-6 space-y-1">
-        <span class="text-[11px] font-bold uppercase tracking-widest text-brandCyan" id="modal-subtitle">CommAIRS Protocol</span>
-        <h3 class="text-2xl font-bold text-white" id="modal-title">Mechanism Form</h3>
       </div>
 
-      <!-- Dynamic Form Target Body -->
-      <div id="modal-body-content">
-        <!-- Rendered via Javascript -->
+      <div class="footer-bottom">
+        <span>© 2026 Supreme Student Council · ARASOF-Nasugbu · Unified Internal Mechanism</span>
+        <span class="study">Interface study B · glass edition</span>
       </div>
-
     </div>
-  </div>
+  </footer>
 
-
-  <!-- TOAST NOTIFICATION POPUP -->
-  <div id="toast-notification" class="fixed bottom-6 right-6 z-50 hidden glass-panel border-brandCyan/40 rounded-2xl px-5 py-3.5 flex items-center gap-3 shadow-2xl transition-all">
-    <div class="w-8 h-8 rounded-xl bg-brandCyan/20 text-brandCyan flex items-center justify-center text-sm shrink-0">
-      <i class="fa-solid fa-circle-check" id="toast-icon"></i>
-    </div>
+  <!-- TOAST -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
     <div>
-      <p class="text-xs font-bold text-white" id="toast-title">Notification</p>
-      <p class="text-[11px] text-slate-300" id="toast-message">Copied to clipboard!</p>
+      <strong id="toast-title">Email copied</strong>
+      <span id="toast-message"></span>
     </div>
   </div>
 
-
-  <!-- JAVASCRIPT DIRECTORY DATA & CONTROLLERS -->
   <script>
-    // 1. Comprehensive Officer & Member Database based on SSC-UIM Documentation
+    /* Council roster — replaced by the secured directory API when it is reachable. */
     const councilDatabase = [
       // HIGHER EXECUTIVES
       {
@@ -1088,424 +1161,182 @@
         tagColor: "brandAmber",
         icon: "fa-user"
       }
-    ];
+    ];;
 
-    let currentCategory = 'all';
-    let currentSearchTerm = '';
+    const COLORS = {
+      brandCyan: 'var(--brand-cyan)',
+      brandTeal: 'var(--brand-teal)',
+      brandOrange: 'var(--brand-orange)',
+      brandAmber: 'var(--brand-amber)'
+    };
 
-    // 2. Render Directory Cards
+    let activeCategory = 'all';
+    let searchTerm = '';
+
+    const listEl = document.getElementById('directory-list');
+    const emptyEl = document.getElementById('directory-empty');
+    const countEl = document.getElementById('directory-count');
+    const searchEl = document.getElementById('directory-search');
+    const clearEl = document.getElementById('clear-search');
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (character) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[character]);
+    }
+
+    function initialsOf(name) {
+      return String(name).trim().split(/\s+/).map((part) => part[0]).slice(0, 2).join('').toUpperCase();
+    }
+
     function renderDirectory() {
-      const grid = document.getElementById('directory-grid');
-      const noResults = document.getElementById('no-results');
-      const countDisplay = document.getElementById('directory-count-display');
-
-      const filtered = councilDatabase.filter(person => {
-        const matchesCategory = (currentCategory === 'all') || (person.category === currentCategory);
-        const searchLower = currentSearchTerm.toLowerCase();
-        const matchesSearch = person.name.toLowerCase().includes(searchLower) ||
-                              person.role.toLowerCase().includes(searchLower) ||
-                              person.email.toLowerCase().includes(searchLower) ||
-                              person.committee.toLowerCase().includes(searchLower);
-        return matchesCategory && matchesSearch;
+      const term = searchTerm.toLowerCase();
+      const filtered = councilDatabase.filter((person) => {
+        const inCategory = activeCategory === 'all' || person.category === activeCategory;
+        const matches = [person.name, person.role, person.email, person.committee]
+          .some((field) => String(field || '').toLowerCase().includes(term));
+        return inCategory && matches;
       });
 
-      countDisplay.innerText = `Showing ${filtered.length} Council Member${filtered.length === 1 ? '' : 's'}`;
+      countEl.textContent = filtered.length + (filtered.length === 1 ? ' officer' : ' officers');
 
-      if (filtered.length === 0) {
-        grid.innerHTML = '';
-        noResults.classList.remove('hidden');
+      if (!filtered.length) {
+        listEl.innerHTML = '';
+        emptyEl.classList.add('is-visible');
         return;
       }
 
-      noResults.classList.add('hidden');
-      grid.innerHTML = filtered.map(person => {
-        
-        let tagBadgeClass = "bg-brandCyan/20 text-brandCyan border-brandCyan/30";
-        if (person.tagColor === 'brandOrange') tagBadgeClass = "bg-brandOrange/20 text-brandOrange border-brandOrange/30";
-        if (person.tagColor === 'brandAmber') tagBadgeClass = "bg-brandAmber/20 text-brandAmber border-brandAmber/30";
-        if (person.tagColor === 'brandTeal') tagBadgeClass = "bg-brandTeal/20 text-brandTeal border-brandTeal/30";
-
-        // Generate initials for avatar
-        const initials = person.name.split(' ').map(n => n[0]).slice(0, 2).join('');
-
+      emptyEl.classList.remove('is-visible');
+      listEl.innerHTML = filtered.map((person, index) => {
+        const color = COLORS[person.tagColor] || 'var(--brand-cyan)';
+        const email = escapeHtml(person.email);
         return `
-          <div class="glass-card rounded-3xl p-5 space-y-4 flex flex-col justify-between group">
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center font-bold text-white text-sm border border-white/15 group-hover:border-brandCyan/50 transition-colors">
-                  ${initials}
-                </div>
-                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold border ${tagBadgeClass}">
-                  ${person.category}
-                </span>
-              </div>
-
-              <div>
-                <h4 class="text-sm font-bold text-white group-hover:text-brandCyan transition-colors leading-snug">${person.name}</h4>
-                <p class="text-[11px] text-brandCyan/90 font-medium mt-0.5">${person.role}</p>
-                <p class="text-[10px] text-slate-400 mt-1 line-clamp-2">${person.committee}</p>
-              </div>
-            </div>
-
-            <div class="pt-3 border-t border-white/10 flex items-center justify-between gap-2 text-[11px]">
-              <span class="font-mono text-slate-300 text-[10px] truncate" title="${person.email}">${person.email}</span>
-              <button onclick="copyToClipboard('${person.email}')" class="glass-button-secondary p-1.5 rounded-lg text-slate-300 hover:text-white shrink-0" title="Copy Email">
-                <i class="fa-regular fa-copy"></i>
-              </button>
-            </div>
-          </div>
-        `;
+          <li class="register-row">
+            <span class="reg-id">${String(index + 1).padStart(2, '0')}</span>
+            <span class="reg-person">
+              <span class="reg-monogram" aria-hidden="true"><span>${escapeHtml(initialsOf(person.name))}</span></span>
+              <span>
+                <span class="reg-name">${escapeHtml(person.name)}</span>
+                <span class="reg-role">${escapeHtml(person.role)}</span>
+              </span>
+            </span>
+            <span class="reg-committee" style="color:${color}"><span title="${escapeHtml(person.committee)}">${escapeHtml(person.category)}</span></span>
+            <a class="reg-email" href="mailto:${email}" title="${email}">${email}</a>
+            <button type="button" class="copy-btn reg-copy" data-copy="${email}" aria-label="Copy ${escapeHtml(person.name)} email" title="Copy email"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+          </li>`;
       }).join('');
     }
 
-    // 3. Filter Committee Function
-    function filterCommittee(cat) {
-      currentCategory = cat;
-      
-      const categories = ['all', 'CommAIRS', 'CommCREL', 'CommFIMA', 'CommPROL', 'Executives'];
-      categories.forEach(c => {
-        const btn = document.getElementById(`tab-${c}`);
-        if (btn) {
-          if (c === cat) {
-            btn.className = 'px-4 py-2 rounded-xl text-xs font-semibold bg-brandCyan text-darkBase transition-all whitespace-nowrap shadow-md';
-          } else {
-            btn.className = 'px-4 py-2 rounded-xl text-xs font-semibold glass-button-secondary text-slate-300 hover:text-white transition-all whitespace-nowrap';
-          }
-        }
+    /* Committee filter tabs */
+    document.querySelectorAll('.dir-tabs [data-category]').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        activeCategory = tab.dataset.category;
+        document.querySelectorAll('.dir-tabs [data-category]').forEach((other) => {
+          other.setAttribute('aria-selected', String(other === tab));
+        });
+        renderDirectory();
       });
+    });
 
+    /* Live search */
+    searchEl.addEventListener('input', () => {
+      searchTerm = searchEl.value.trim();
+      clearEl.hidden = searchTerm.length === 0;
       renderDirectory();
-    }
+    });
 
-    // 4. Directory Search Handle
-    function handleDirectorySearch() {
-      const input = document.getElementById('dir-search-input');
-      const clearBtn = document.getElementById('clear-search-btn');
-      currentSearchTerm = input.value.trim();
-
-      if (currentSearchTerm.length > 0) {
-        clearBtn.classList.remove('hidden');
-      } else {
-        clearBtn.classList.add('hidden');
-      }
-
+    clearEl.addEventListener('click', () => {
+      searchEl.value = '';
+      searchTerm = '';
+      clearEl.hidden = true;
       renderDirectory();
-    }
+      searchEl.focus();
+    });
 
-    function syncSearch(val) {
-      document.getElementById('dir-search-input').value = val;
-      handleDirectorySearch();
-    }
-
-    function clearSearch() {
-      document.getElementById('dir-search-input').value = '';
-      document.getElementById('hero-search-input').value = '';
-      currentSearchTerm = '';
-      document.getElementById('clear-search-btn').classList.add('hidden');
+    document.getElementById('reset-filters').addEventListener('click', () => {
+      searchEl.value = '';
+      searchTerm = '';
+      clearEl.hidden = true;
+      activeCategory = 'all';
+      document.querySelectorAll('.dir-tabs [data-category]').forEach((tab) => {
+        tab.setAttribute('aria-selected', String(tab.dataset.category === 'all'));
+      });
       renderDirectory();
-    }
+    });
 
-    function resetDirectoryFilters() {
-      clearSearch();
-      filterCommittee('all');
-    }
-
-    // 5. Copy Email Helper
-    function copyToClipboard(text) {
-      const el = document.createElement('textarea');
-      el.value = text;
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand('copy');
-      document.body.removeChild(el);
-
-      showToast('G-Suite Email Copied!', text);
-    }
-
-    // 6. Toast Notification Manager
+    /* Copy to clipboard + toast */
+    let toastTimer;
     function showToast(title, message) {
-      const toast = document.getElementById('toast-notification');
-      document.getElementById('toast-title').innerText = title;
-      document.getElementById('toast-message').innerText = message;
-
-      toast.classList.remove('hidden');
-      toast.classList.add('flex');
-
-      setTimeout(() => {
-        toast.classList.add('hidden');
-        toast.classList.remove('flex');
-      }, 3000);
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-title').textContent = title;
+      document.getElementById('toast-message').textContent = message;
+      toast.classList.add('is-visible');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('is-visible'), 2800);
     }
 
-    // 7. Interactive Mechanism Modal Systems
-    function openMechanismModal(type) {
-      const modal = document.getElementById('mechanism-modal');
-      const title = document.getElementById('modal-title');
-      const subtitle = document.getElementById('modal-subtitle');
-      const body = document.getElementById('modal-body-content');
-
-      if (type === 'dtn') {
-        subtitle.innerText = 'CommAIRS Archival Mechanism';
-        title.innerText = 'Document Tracking Number (DTN) Request Form';
-        body.innerHTML = `
-          <form onsubmit="handleDTNSubmit(event)" class="space-y-4">
-            <div class="space-y-1">
-              <label class="text-xs font-medium text-slate-300">Document Title / Subject</label>
-              <input type="text" required placeholder="e.g. Financial Requisition for Student Summit 2026" class="w-full glass-input rounded-xl px-4 py-2.5 text-xs">
-            </div>
-
-            <div class="grid sm:grid-cols-2 gap-4">
-              <div class="space-y-1">
-                <label class="text-xs font-medium text-slate-300">Target Committee</label>
-                <select class="w-full glass-input rounded-xl px-4 py-2.5 text-xs bg-darkBase">
-                  <option value="CommAIRS">CommAIRS - Archival Information</option>
-                  <option value="CommCREL">CommCREL - Community & External</option>
-                  <option value="CommFIMA">CommFIMA - Finance & Audit</option>
-                  <option value="CommPROL">CommPROL - Procurement & Logistics</option>
-                </select>
-              </div>
-              <div class="space-y-1">
-                <label class="text-xs font-medium text-slate-300">Requesting Officer Email</label>
-                <input type="email" required placeholder="24-XXXXX@g.batstate-u.edu.ph" class="w-full glass-input rounded-xl px-4 py-2.5 text-xs">
-              </div>
-            </div>
-
-            <div class="space-y-1">
-              <label class="text-xs font-medium text-slate-300">Document Purpose / Description</label>
-              <textarea rows="3" required placeholder="State the purpose and intended signatories..." class="w-full glass-input rounded-xl px-4 py-2.5 text-xs resize-none"></textarea>
-            </div>
-
-            <div class="pt-2 flex justify-end gap-3">
-              <button type="button" onclick="closeMechanismModal()" class="glass-button-secondary px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancel</button>
-              <button type="submit" class="glass-button-cyan px-6 py-2 rounded-xl text-xs font-semibold text-darkBase">Generate Official DTN</button>
-            </div>
-          </form>
-          <div id="dtn-result" class="hidden mt-4 p-4 rounded-2xl glass-card border-emerald-500/40 text-center space-y-2">
-            <p class="text-xs text-slate-400">Generated Document Tracking Number:</p>
-            <p class="text-xl font-mono font-bold text-emerald-400" id="generated-dtn-code">SSC-UIM-2026-0894</p>
-            <p class="text-[11px] text-slate-300">Routed to Carl Steven Pepino (SecGen) & CommAIRS Vault.</p>
-          </div>
-        `;
-      } else if (type === 'duty') {
-        subtitle.innerText = 'Council Operations Protocol';
-        title.innerText = 'Event Duty Tracker Attendance';
-        body.innerHTML = `
-          <form onsubmit="handleDutySubmit(event)" class="space-y-4">
-            <div class="grid sm:grid-cols-2 gap-4">
-              <div class="space-y-1">
-                <label class="text-xs font-medium text-slate-300">Officer Name</label>
-                <select class="w-full glass-input rounded-xl px-4 py-2.5 text-xs bg-darkBase">
-                  ${councilDatabase.map(p => `<option value="${p.name}">${p.name} (${p.category})</option>`).join('')}
-                </select>
-              </div>
-              <div class="space-y-1">
-                <label class="text-xs font-medium text-slate-300">Event / Shift Name</label>
-                <input type="text" required placeholder="e.g. ARASOF Campus Clean-up & Orientation" class="w-full glass-input rounded-xl px-4 py-2.5 text-xs">
-              </div>
-            </div>
-
-            <div class="grid sm:grid-cols-2 gap-4">
-              <div class="space-y-1">
-                <label class="text-xs font-medium text-slate-300">Duty Venue</label>
-                <input type="text" required placeholder="e.g. ARASOF Gymnasium / SSC Office" class="w-full glass-input rounded-xl px-4 py-2.5 text-xs">
-              </div>
-              <div class="space-y-1">
-                <label class="text-xs font-medium text-slate-300">Shift Status</label>
-                <select class="w-full glass-input rounded-xl px-4 py-2.5 text-xs bg-darkBase">
-                  <option>Duty Check-In (Time In)</option>
-                  <option>Duty Check-Out (Time Out)</option>
-                  <option>On-Call Emergency Duty</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="pt-2 flex justify-end gap-3">
-              <button type="button" onclick="closeMechanismModal()" class="glass-button-secondary px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancel</button>
-              <button type="submit" class="glass-button-primary px-6 py-2 rounded-xl text-xs font-semibold text-white">Log Attendance</button>
-            </div>
-          </form>
-        `;
-      } else if (type === 'leave') {
-        subtitle.innerText = 'CommAIRS Administrative Form';
-        title.innerText = 'Filing of Leave of Absence';
-        body.innerHTML = `
-          <form onsubmit="handleLeaveSubmit(event)" class="space-y-4">
-            <div class="grid sm:grid-cols-2 gap-4">
-              <div class="space-y-1">
-                <label class="text-xs font-medium text-slate-300">Filing Officer G-Suite Email</label>
-                <input type="email" required placeholder="24-XXXXX@g.batstate-u.edu.ph" class="w-full glass-input rounded-xl px-4 py-2.5 text-xs">
-              </div>
-              <div class="space-y-1">
-                <label class="text-xs font-medium text-slate-300">Committee</label>
-                <select class="w-full glass-input rounded-xl px-4 py-2.5 text-xs bg-darkBase">
-                  <option>CommAIRS</option>
-                  <option>CommCREL</option>
-                  <option>CommFIMA</option>
-                  <option>CommPROL</option>
-                  <option>Higher Executives</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="grid sm:grid-cols-2 gap-4">
-              <div class="space-y-1">
-                <label class="text-xs font-medium text-slate-300">Start Date of Leave</label>
-                <input type="date" required class="w-full glass-input rounded-xl px-4 py-2.5 text-xs">
-              </div>
-              <div class="space-y-1">
-                <label class="text-xs font-medium text-slate-300">End Date of Leave</label>
-                <input type="date" required class="w-full glass-input rounded-xl px-4 py-2.5 text-xs">
-              </div>
-            </div>
-
-            <div class="space-y-1">
-              <label class="text-xs font-medium text-slate-300">Reason for Absence</label>
-              <textarea rows="3" required placeholder="Specify academic or personal justification..." class="w-full glass-input rounded-xl px-4 py-2.5 text-xs resize-none"></textarea>
-            </div>
-
-            <div class="pt-2 flex justify-end gap-3">
-              <button type="button" onclick="closeMechanismModal()" class="glass-button-secondary px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancel</button>
-              <button type="submit" class="glass-button-secondary px-6 py-2 rounded-xl text-xs font-semibold text-brandAmber border-brandAmber/40">Submit Leave Application</button>
-            </div>
-          </form>
-        `;
-      } else if (type === 'report') {
-        subtitle.innerText = 'Consolidated Statistics';
-        title.innerText = 'Weekly Attendance Compliance Report';
-        body.innerHTML = `
-          <div class="space-y-4">
-            <div class="p-3 rounded-2xl glass-card text-xs flex justify-between items-center">
-              <span class="text-slate-300">Cycle: Week 8 (Current Term)</span>
-              <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">96.2% Compliance Rate</span>
-            </div>
-
-            <div class="overflow-x-auto">
-              <table class="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr class="border-b border-white/10 text-slate-400">
-                    <th class="py-2.5 px-3">Committee</th>
-                    <th class="py-2.5 px-3">Active Members</th>
-                    <th class="py-2.5 px-3">Duty Hours Logged</th>
-                    <th class="py-2.5 px-3">Status</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-white/5 text-slate-200">
-                  <tr>
-                    <td class="py-2.5 px-3 font-semibold text-brandCyan">CommAIRS</td>
-                    <td class="py-2.5 px-3">6 Officers</td>
-                    <td class="py-2.5 px-3 font-mono">148.5 hrs</td>
-                    <td class="py-2.5 px-3 text-emerald-400 font-medium">Excellent</td>
-                  </tr>
-                  <tr>
-                    <td class="py-2.5 px-3 font-semibold text-brandTeal">CommCREL</td>
-                    <td class="py-2.5 px-3">7 Officers</td>
-                    <td class="py-2.5 px-3 font-mono">162.0 hrs</td>
-                    <td class="py-2.5 px-3 text-emerald-400 font-medium">Excellent</td>
-                  </tr>
-                  <tr>
-                    <td class="py-2.5 px-3 font-semibold text-brandOrange">CommFIMA</td>
-                    <td class="py-2.5 px-3">6 Officers</td>
-                    <td class="py-2.5 px-3 font-mono">134.0 hrs</td>
-                    <td class="py-2.5 px-3 text-emerald-400 font-medium">Optimal</td>
-                  </tr>
-                  <tr>
-                    <td class="py-2.5 px-3 font-semibold text-brandAmber">CommPROL</td>
-                    <td class="py-2.5 px-3">5 Officers</td>
-                    <td class="py-2.5 px-3 font-mono">120.5 hrs</td>
-                    <td class="py-2.5 px-3 text-emerald-400 font-medium">Optimal</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="pt-3 flex justify-end">
-              <button onclick="closeMechanismModal()" class="glass-button-cyan px-5 py-2 rounded-xl text-xs font-semibold text-darkBase">Close Report</button>
-            </div>
-          </div>
-        `;
+    async function copyEmail(email) {
+      try {
+        await navigator.clipboard.writeText(email);
+      } catch (error) {
+        const field = document.createElement('textarea');
+        field.value = email;
+        field.setAttribute('readonly', '');
+        field.style.position = 'fixed';
+        field.style.opacity = '0';
+        document.body.appendChild(field);
+        field.select();
+        document.execCommand('copy');
+        document.body.removeChild(field);
       }
-
-      modal.classList.remove('hidden');
+      showToast('University email copied', email);
     }
 
-    function closeMechanismModal() {
-      document.getElementById('mechanism-modal').classList.add('hidden');
-    }
-
-    // Modal Form Handlers
-    function handleDTNSubmit(e) {
-      e.preventDefault();
-      const code = 'SSC-UIM-2026-' + Math.floor(1000 + Math.random() * 9000);
-      document.getElementById('generated-dtn-code').innerText = code;
-      document.getElementById('dtn-result').classList.remove('hidden');
-      showToast('DTN Generated Successfully!', code);
-    }
-
-    function handleDutySubmit(e) {
-      e.preventDefault();
-      showToast('Duty Logged Successfully!', 'Recorded in SSC-UIM Master Database.');
-      closeMechanismModal();
-    }
-
-    function handleLeaveSubmit(e) {
-      e.preventDefault();
-      showToast('Leave Form Transmitted', 'Routed to Secretary General for review.');
-      closeMechanismModal();
-    }
-
-    // 8. Mobile Menu Toggle Controller
-    function toggleMobileMenu() {
-      const menu = document.getElementById('mobile-menu');
-      const icon = document.getElementById('menu-icon');
-      if (menu.classList.contains('hidden')) {
-        menu.classList.remove('hidden');
-        menu.classList.add('flex');
-        icon.classList.remove('fa-bars');
-        icon.classList.add('fa-xmark');
-      } else {
-        menu.classList.add('hidden');
-        menu.classList.remove('flex');
-        icon.classList.remove('fa-xmark');
-        icon.classList.add('fa-bars');
+    document.addEventListener('click', (event) => {
+      const trigger = event.target.closest('[data-copy]');
+      if (trigger) {
+        copyEmail(trigger.dataset.copy);
       }
-    }
-    document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+    });
 
-    function syncPageView() {
-      const showDirectory = window.location.hash === '#directory';
-      document.getElementById('hero').classList.toggle('hidden', showDirectory);
-      document.getElementById('leadership').classList.toggle('hidden', showDirectory);
-      document.getElementById('directory').classList.toggle('hidden', !showDirectory);
-      document.querySelector('footer').classList.toggle('hidden', !showDirectory);
-    }
-    window.addEventListener('hashchange', syncPageView);
+    /* Mobile navigation */
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+    const menuIcon = document.getElementById('menu-icon');
 
-    // Dynamic Cursor Follower Logic
-    const cursorLight = document.getElementById('cursor-light');
-    if (cursorLight && window.innerWidth > 768) {
-      document.addEventListener('mousemove', (e) => {
-        cursorLight.style.left = `${e.clientX}px`;
-        cursorLight.style.top = `${e.clientY}px`;
-      });
-    }
+    menuToggle.addEventListener('click', () => {
+      const open = mobileNav.classList.toggle('is-open');
+      menuToggle.setAttribute('aria-expanded', String(open));
+      menuIcon.classList.toggle('fa-bars', !open);
+      menuIcon.classList.toggle('fa-xmark', open);
+    });
 
+    mobileNav.addEventListener('click', (event) => {
+      if (event.target.tagName === 'A') {
+        mobileNav.classList.remove('is-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuIcon.classList.add('fa-bars');
+        menuIcon.classList.remove('fa-xmark');
+      }
+    });
+
+    /* Load the live directory, then fall back to the embedded roster */
     async function loadDirectory() {
+      renderDirectory();
       try {
         const response = await fetch('api.php?action=directory', { credentials: 'same-origin' });
-        if (!response.ok) throw new Error('Directory API unavailable.');
+        if (!response.ok) return;
         const data = await response.json();
-        councilDatabase.splice(0, councilDatabase.length, ...data.officers);
+        if (Array.isArray(data.officers) && data.officers.length) {
+          councilDatabase.splice(0, councilDatabase.length, ...data.officers);
+          renderDirectory();
+        }
       } catch (error) {
-        console.warn(error.message);
+        /* Static preview: the embedded roster stays in place. */
       }
-      renderDirectory();
     }
 
-    window.onload = function() {
-      loadDirectory();
-      syncPageView();
-    };
+    loadDirectory();
   </script>
-
 </body>
 </html>
