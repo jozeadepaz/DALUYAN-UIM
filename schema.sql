@@ -1,3 +1,4 @@
+
 CREATE DATABASE IF NOT EXISTS daluyan_uim
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
@@ -101,6 +102,24 @@ CREATE TABLE IF NOT EXISTS attendance_records (
   CONSTRAINT fk_attendance_logger FOREIGN KEY (logged_by) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS attendance_entry_requests (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  officer_id BIGINT UNSIGNED NOT NULL,
+  event_name VARCHAR(200) NOT NULL,
+  venue VARCHAR(200) NOT NULL,
+  duty_action ENUM('check_in','check_out','on_call') NOT NULL,
+  submitted_by BIGINT UNSIGNED NOT NULL,
+  status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  reviewed_by BIGINT UNSIGNED NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  reviewed_at DATETIME NULL DEFAULT NULL,
+  INDEX idx_attendance_entry_status (status, created_at),
+  INDEX idx_attendance_entry_officer (officer_id, status, created_at),
+  CONSTRAINT fk_attendance_entry_officer FOREIGN KEY (officer_id) REFERENCES users(id),
+  CONSTRAINT fk_attendance_entry_submitter FOREIGN KEY (submitted_by) REFERENCES users(id),
+  CONSTRAINT fk_attendance_entry_reviewer FOREIGN KEY (reviewed_by) REFERENCES users(id)
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS leave_requests (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   officer_id BIGINT UNSIGNED NOT NULL,
@@ -134,6 +153,7 @@ INSERT INTO permissions (permission_key, description) VALUES
   ('attendance.view_all', 'View attendance records across all committees'),
   ('attendance.submit_self', 'Submit attendance for the signed-in user'),
   ('attendance.submit_any', 'Submit attendance for any directory officer'),
+  ('attendance.approve', 'Approve or reject attendance entry requests'),
   ('dtn.view_all', 'View document tracking requests'),
   ('dtn.submit_self', 'Submit a document tracking request for the signed-in user'),
   ('dtn.submit_any', 'Submit a document tracking request for any requester'),
@@ -145,6 +165,7 @@ ON DUPLICATE KEY UPDATE description = VALUES(description);
 
 INSERT INTO role_permissions (role_key, permission_key) VALUES
   ('adviser', 'attendance.view_all'),
+  ('adviser', 'attendance.approve'),
   ('adviser', 'attendance.submit_self'),
   ('adviser', 'attendance.submit_any'),
   ('adviser', 'dtn.view_all'),
@@ -155,6 +176,7 @@ INSERT INTO role_permissions (role_key, permission_key) VALUES
   ('adviser', 'leave.submit_any'),
   ('adviser', 'reports.view_all'),
   ('executive', 'attendance.view_all'),
+  ('executive', 'attendance.approve'),
   ('executive', 'attendance.submit_self'),
   ('executive', 'attendance.submit_any'),
   ('executive', 'dtn.view_all'),

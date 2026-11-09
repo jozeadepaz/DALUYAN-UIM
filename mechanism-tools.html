@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="brand.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -28,6 +29,7 @@
     };
   </script>
   <style>
+    :root { color-scheme: dark; }
     body { font-family: 'Poppins', sans-serif; background: #060a12; color: #f3f4f6; }
     .glass-panel { background: rgba(15, 23, 42, .72); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 20px 50px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12); }
     .glass-card { background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.12); transition: transform .2s ease, border-color .2s ease, background .2s ease; }
@@ -44,16 +46,17 @@
 <body class="min-h-screen antialiased selection:bg-brandCyan/30 selection:text-brandCyan">
   <header class="sticky top-0 z-30 px-4 sm:px-8 py-3 bg-darkBase/80 backdrop-blur-md border-b border-white/10">
     <nav class="max-w-7xl mx-auto flex items-center justify-between gap-4">
-      <a href="DALUYAN-UIM.html" class="flex items-center gap-3" aria-label="DALUYAN home">
-        <span class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brandCyan via-brandOrange to-brandAmber p-[2px]">
-          <span class="w-full h-full rounded-[10px] bg-darkBase flex items-center justify-center text-brandCyan"><i class="fa-solid fa-shield-halved"></i></span>
+      <a href="DALUYAN-UIM.html" class="portal-brand" aria-label="DALUYAN home">
+        <span class="portal-brand-mark" aria-hidden="true">
+          <span><i class="fa-solid fa-shield-halved"></i></span>
         </span>
         <span>
-          <span class="block text-lg font-extrabold text-gradient-brand">DALUYAN <span class="text-xs text-brandCyan">SSC-UIM</span></span>
-          <span class="block text-[10px] text-slate-400">Mechanism Tools</span>
+          <span class="portal-brand-name">DALUYAN</span>
+          <span class="portal-brand-sub">SSC-UIM</span>
         </span>
       </a>
       <div class="flex items-center gap-3 text-xs font-semibold">
+        <a href="council-services.php" class="hidden sm:inline text-slate-300 hover:text-brandCyan transition-colors">Council Services</a>
         <a href="DALUYAN-UIM.html#directory" class="hidden sm:inline text-slate-300 hover:text-brandCyan transition-colors">Committee Directory</a>
         <a href="DALUYAN-UIM.html" class="glass-panel px-4 py-2 rounded-xl text-brandCyan hover:border-brandCyan/50 transition-colors"><i class="fa-solid fa-arrow-left mr-2"></i>DALUYAN</a>
         <button id="tool-signout" type="button" class="rounded-lg border border-white/15 px-3 py-2 text-slate-300 hover:text-white transition-colors">Sign Out</button>
@@ -145,7 +148,7 @@
       const data = await response.json();
       if (response.status === 401) {
         window.location.replace('login.html');
-        throw new Error('Sign in to continue.');
+        throw new Error('Log in to continue.');
       }
       if (!response.ok) throw new Error(data.error || 'The request could not be completed.');
       return data;
@@ -200,13 +203,14 @@
           title: 'Event Duty Tracker',
           content: `<form data-tool="duty" class="space-y-4">
             <div class="grid sm:grid-cols-2 gap-4">
-              <div><label class="${labelClass}">Officer</label><select class="${fieldClass}" name="officerEmail" required>${directoryMembers.map(person => `<option value="${escapeHtml(person.email)}">${escapeHtml(person.name)} · ${escapeHtml(person.category)}</option>`).join('')}</select></div>
-              <div><label class="${labelClass}">Event / Shift Name</label><input class="${fieldClass}" name="event" required placeholder="Event or shift"></div>
+              <div><label class="${labelClass}">Name</label><input class="${fieldClass}" name="officerName" type="text" required autocomplete="off" placeholder="Enter officer name"><input type="hidden" name="officerEmail"><p class="mt-1 text-[10px] text-slate-500">Enter the name as listed in the officer database.</p></div>
+              <div><label class="${labelClass}">Position</label><input class="${fieldClass}" type="text" readonly aria-live="polite" placeholder="Filled from officer database"></div>
             </div>
             <div class="grid sm:grid-cols-2 gap-4">
+              <div><label class="${labelClass}">Event / Shift Name</label><input class="${fieldClass}" name="event" required placeholder="Event or shift"></div>
               <div><label class="${labelClass}">Duty Venue</label><input class="${fieldClass}" name="venue" required placeholder="Venue"></div>
-              <div><label class="${labelClass}">Shift Status</label><select class="${fieldClass}" name="status"><option value="check_in">Duty Check-In (Time In)</option><option value="check_out">Duty Check-Out (Time Out)</option><option value="on_call">On-Call Emergency Duty</option></select></div>
             </div>
+            <div><label class="${labelClass}">Shift Status</label><select class="${fieldClass}" name="status"><option value="check_in">Duty Check-In (Time In)</option><option value="check_out">Duty Check-Out (Time Out)</option><option value="on_call">On-Call Emergency Duty</option></select></div>
             <div class="flex justify-end gap-3"><button type="button" onclick="closeTool()" class="glass-panel px-4 py-2 rounded-lg text-xs text-slate-300">Cancel</button><button class="button-warm px-5 py-2 rounded-lg text-xs font-semibold">Log Attendance</button></div>
           </form>`
         },
@@ -244,7 +248,19 @@
       modalBody.innerHTML = form.content;
       modal.classList.remove('hidden');
       modal.classList.add('flex');
-      modal.querySelector('input, button')?.focus();
+      const initialFocus = type === 'duty' ? modalBody.querySelector('[name="officerName"]') : modal.querySelector('input, button');
+      initialFocus?.focus();
+      if (type === 'duty') {
+        const officerNameInput = modalBody.querySelector('[name="officerName"]');
+        const officerEmailInput = modalBody.querySelector('[name="officerEmail"]');
+        const positionInput = officerNameInput.closest('form').querySelector('input[readonly]');
+        officerNameInput.addEventListener('input', () => {
+          const officer = directoryMembers.find(person => person.name.trim().toLocaleLowerCase() === officerNameInput.value.trim().toLocaleLowerCase());
+          officerEmailInput.value = officer?.email ?? '';
+          positionInput.value = officer?.role ?? '';
+          officerNameInput.setCustomValidity(officerNameInput.value.trim() && !officer ? 'Enter a name from the officer database.' : '');
+        });
+      }
       if (type === 'report') loadReport();
     }
 
@@ -287,6 +303,12 @@
       if (!form) return;
       event.preventDefault();
       const payload = Object.fromEntries(new FormData(form).entries());
+      if (form.dataset.tool === 'duty' && !payload.officerEmail) {
+        form.elements.officerName.setCustomValidity('Enter a name from the officer database.');
+        form.elements.officerName.reportValidity();
+        form.elements.officerName.focus();
+        return;
+      }
       try {
         const result = await apiRequest(form.dataset.tool, payload);
         if (form.dataset.tool === 'dtn') {

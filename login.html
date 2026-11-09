@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#060a12">
-  <title>Sign In | DALUYAN SSC-UIM</title>
+  <title>Login | DALUYAN SSC-UIM</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="brand.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -39,7 +40,6 @@
     .login-panel { background: rgba(11,19,34,.88); border: 1px solid rgba(255,255,255,.13); box-shadow: 0 24px 70px rgba(0,0,0,.4); backdrop-filter: blur(18px); }
     .field { background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.16); color: #f8fafc; }
     .field:focus { outline: 2px solid rgba(85,207,245,.75); outline-offset: 2px; border-color: transparent; }
-    .brand-wordmark { background: linear-gradient(120deg,#55CFF5 0%,#FF6F32 58%,#EEA61C 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .submit-button { background: linear-gradient(110deg,#0088B3,#55CFF5); color: #06121a; }
     .submit-button:hover { filter: brightness(1.08); }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
@@ -48,13 +48,13 @@
 <body class="min-h-screen antialiased">
   <main class="login-backdrop min-h-screen flex flex-col">
     <header class="px-5 sm:px-8 py-5">
-      <a href="DALUYAN-UIM.html" class="inline-flex items-center gap-3" aria-label="Return to DALUYAN portal">
-        <span class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brandCyan via-brandOrange to-brandAmber p-[2px]">
-          <span class="w-full h-full rounded-[10px] bg-darkBase flex items-center justify-center text-brandCyan"><i class="fa-solid fa-shield-halved"></i></span>
+      <a href="DALUYAN-UIM.html" class="portal-brand" aria-label="Return to DALUYAN portal">
+        <span class="portal-brand-mark" aria-hidden="true">
+          <span><i class="fa-solid fa-shield-halved"></i></span>
         </span>
         <span>
-          <span class="block text-xl font-extrabold tracking-tight brand-wordmark">DALUYAN <span class="text-xs text-brandCyan">SSC-UIM</span></span>
-          <span class="block text-[10px] text-slate-400">BatStateU ARASOF-Nasugbu</span>
+          <span class="portal-brand-name">DALUYAN</span>
+          <span class="portal-brand-sub">SSC-UIM</span>
         </span>
       </a>
     </header>
@@ -77,8 +77,8 @@
         <div class="p-6 sm:p-10 xl:p-12">
           <div class="mb-8">
             <p class="text-xs uppercase tracking-[0.16em] font-semibold text-brandOrange">SSC-UIM Access</p>
-            <h2 class="mt-2 text-2xl sm:text-3xl font-bold">Sign in</h2>
-            <p class="mt-2 text-sm text-slate-400">Use your university account credentials.</p>
+            <h2 class="mt-2 text-2xl sm:text-3xl font-bold">Login</h2>
+            <p class="mt-2 text-sm text-slate-400">Only active, approved @g.batstate-u.edu.ph accounts can log in.</p>
           </div>
 
           <form id="login-form" class="space-y-5" novalidate>
@@ -88,7 +88,7 @@
                 <i class="fa-regular fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm" aria-hidden="true"></i>
                 <input id="email" name="email" type="email" autocomplete="username" required placeholder="name@g.batstate-u.edu.ph" class="field w-full rounded-lg pl-11 pr-4 py-3 text-sm placeholder:text-slate-600">
               </div>
-              <p id="email-error" class="hidden mt-2 text-xs text-rose-300" role="alert">Enter a valid university email address.</p>
+              <p id="email-error" class="hidden mt-2 text-xs text-rose-300" role="alert">Use a valid @g.batstate-u.edu.ph email address.</p>
             </div>
 
             <div>
@@ -110,7 +110,7 @@
               Remember me on this device
             </label>
 
-            <button type="submit" class="submit-button w-full rounded-lg py-3 text-sm font-bold transition">Sign In <i class="fa-solid fa-arrow-right ml-2" aria-hidden="true"></i></button>
+            <button type="submit" class="submit-button w-full rounded-lg py-3 text-sm font-bold transition">Login <i class="fa-solid fa-arrow-right ml-2" aria-hidden="true"></i></button>
             <p id="login-status" class="hidden rounded-lg border border-brandAmber/30 bg-brandAmber/10 px-4 py-3 text-xs leading-relaxed text-amber-100" role="status" aria-live="polite"></p>
           </form>
 
@@ -132,18 +132,28 @@
     const passwordToggle = document.getElementById('password-toggle');
     let csrfToken = '';
 
+    function postLoginDestination(user) {
+      if (user?.role === 'executive') {
+        return 'executive-dashboard.html';
+      }
+      if (new URLSearchParams(window.location.search).get('next') === 'council-services.php') {
+        return 'council-services.php';
+      }
+      return 'my-dashboard.php';
+    }
+
     async function initializeSession() {
       const status = document.getElementById('login-status');
       try {
         const response = await fetch('api.php?action=session', { credentials: 'same-origin' });
-        if (!response.ok) throw new Error('The sign-in service is unavailable.');
+        if (!response.ok) throw new Error('The login service is unavailable.');
         const data = await response.json();
         csrfToken = data.csrf;
         if (data.user) {
-          window.location.replace(data.user.role === 'adviser' || data.user.role === 'executive' ? 'executive-dashboard.html' : 'mechanism-tools.html');
+          window.location.replace(postLoginDestination(data.user));
         }
       } catch {
-        status.textContent = 'Open DALUYAN through its PHP server to sign in.';
+        status.textContent = 'Open DALUYAN through its PHP server to log in.';
         status.classList.remove('hidden');
       }
     }
@@ -178,7 +188,7 @@
       }
 
       if (!csrfToken) {
-        status.textContent = 'The sign-in service is unavailable. Open DALUYAN through its PHP server.';
+        status.textContent = 'The login service is unavailable. Open DALUYAN through its PHP server.';
         status.classList.remove('hidden');
         return;
       }
@@ -191,10 +201,10 @@
           body: JSON.stringify({ email: emailInput.value.trim(), password: passwordInput.value })
         });
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Unable to sign in.');
-        window.location.replace(data.user.role === 'adviser' || data.user.role === 'executive' ? 'executive-dashboard.html' : 'mechanism-tools.html');
+        if (!response.ok) throw new Error(data.error || 'Unable to log in.');
+        window.location.replace(postLoginDestination(data.user));
       } catch (error) {
-        status.textContent = error.message || 'The sign-in service is unavailable.';
+        status.textContent = error.message || 'The login service is unavailable.';
         status.classList.remove('hidden');
       }
     });

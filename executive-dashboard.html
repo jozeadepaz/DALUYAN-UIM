@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="brand.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -35,6 +36,10 @@
     .panel { background: rgba(15,23,42,.66); border: 1px solid rgba(255,255,255,.11); backdrop-filter: blur(14px); }
     .data-bar { height: 7px; background: rgba(255,255,255,.08); overflow: hidden; border-radius: 999px; }
     .data-bar > span { display: block; height: 100%; border-radius: inherit; }
+    .review-link { display: flex; align-items: center; justify-content: space-between; gap: .6rem; border-radius: .65rem; padding: .75rem; color: #cbd5e1; font-size: .72rem; transition: background-color .2s ease, color .2s ease; }
+    .review-link:hover, .review-link:focus-visible { background: rgba(255,255,255,.07); color: #fff; }
+    .review-count { min-width: 1.5rem; border-radius: 999px; background: rgba(85,207,245,.14); padding: .1rem .42rem; color: #8be1fa; font-size: .62rem; text-align: center; }
+    .review-count.is-pending { background: rgba(238,166,28,.16); color: #f5cd7a; }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
   </style>
 </head>
@@ -42,9 +47,9 @@
   <div class="dashboard-surface min-h-screen">
     <header class="sticky top-0 z-30 border-b border-white/10 bg-darkBase/90 backdrop-blur-md">
       <nav class="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-4">
-        <a href="DALUYAN-UIM.html" class="flex items-center gap-3" aria-label="DALUYAN portal">
-          <span class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brandCyan via-brandOrange to-brandAmber p-[2px]"><span class="w-full h-full rounded-[10px] bg-darkBase flex items-center justify-center text-brandCyan"><i class="fa-solid fa-shield-halved"></i></span></span>
-          <span><span class="block font-extrabold tracking-wide">DALUYAN <span class="text-brandCyan text-xs">SSC-UIM</span></span><span class="block text-[10px] text-slate-400">Executive Dashboard</span></span>
+        <a href="DALUYAN-UIM.html" class="portal-brand" aria-label="DALUYAN portal">
+          <span class="portal-brand-mark" aria-hidden="true"><span><i class="fa-solid fa-shield-halved"></i></span></span>
+          <span><span class="portal-brand-name">DALUYAN</span><span class="portal-brand-sub">SSC-UIM</span></span>
         </a>
         <div class="flex items-center gap-3 text-xs">
           <span class="hidden sm:inline-flex items-center gap-2 rounded-full border border-brandAmber/30 bg-brandAmber/10 px-3 py-1.5 text-brandAmber"><i class="fa-solid fa-user-shield"></i> Adviser & Executive View</span>
@@ -54,7 +59,15 @@
       </nav>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-10 space-y-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-10 grid lg:grid-cols-[220px_minmax(0,1fr)] items-start gap-6">
+      <aside class="panel rounded-xl p-3 lg:sticky lg:top-20" aria-label="Council review navigation">
+        <p class="px-3 py-2 text-[10px] uppercase tracking-[0.16em] font-semibold text-slate-500">Review queue</p>
+        <nav class="grid sm:grid-cols-2 lg:grid-cols-1 gap-1">
+          <a class="review-link" href="#dtn-requests"><span><i class="fa-solid fa-hashtag mr-2 text-brandCyan" aria-hidden="true"></i>DTN requests</span><span id="sidebar-dtn-count" class="review-count" aria-label="DTN request count">--</span></a>
+          <a class="review-link" href="#attendance-approvals"><span><i class="fa-solid fa-user-check mr-2 text-brandOrange" aria-hidden="true"></i>Attendance approvals</span><span id="sidebar-attendance-count" class="review-count is-pending" aria-label="Pending attendance approvals">--</span></a>
+        </nav>
+      </aside>
+      <div class="min-w-0 space-y-8">
       <section class="flex flex-col lg:flex-row lg:items-end justify-between gap-5">
         <div>
           <p class="text-[11px] uppercase tracking-[0.18em] font-semibold text-brandCyan">Council Operations</p>
@@ -96,6 +109,33 @@
           <p id="live-leaves" class="mt-4 text-3xl font-semibold">--</p>
           <p class="mt-1 text-[11px] text-slate-500">Awaiting review</p>
         </article>
+      </section>
+
+      <section id="dtn-requests" class="panel rounded-xl overflow-hidden scroll-mt-24">
+        <div class="px-5 py-4 border-b border-white/10">
+          <h2 class="text-sm font-semibold">DTN requests</h2>
+          <p class="mt-1 text-[11px] text-slate-500">Latest requests within your access scope.</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs min-w-[700px]">
+            <thead class="text-slate-500"><tr><th class="p-3">Request</th><th class="p-3">Subject</th><th class="p-3">Requester</th><th class="p-3">Committee</th><th class="p-3">Status</th><th class="p-3">Submitted</th></tr></thead>
+            <tbody id="dtn-request-rows" class="divide-y divide-white/5 text-slate-300"><tr><td class="p-3 text-slate-500" colspan="6">Loading DTN requests...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="attendance-approvals" class="panel rounded-xl overflow-hidden scroll-mt-24">
+        <div class="px-5 py-4 border-b border-white/10">
+          <h2 class="text-sm font-semibold">Attendance entry approvals</h2>
+          <p class="mt-1 text-[11px] text-slate-500">Approve or reject submitted duty entries before they are added to attendance records.</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs min-w-[760px]">
+            <thead class="text-slate-500"><tr><th class="p-3">Officer</th><th class="p-3">Committee</th><th class="p-3">Event / shift</th><th class="p-3">Venue</th><th class="p-3">Entry type</th><th class="p-3">Submitted</th><th class="p-3">Review</th></tr></thead>
+            <tbody id="attendance-approval-rows" class="divide-y divide-white/5 text-slate-300"><tr><td class="p-3 text-slate-500" colspan="7">Loading attendance approvals...</td></tr></tbody>
+          </table>
+        </div>
+        <p id="approval-status" class="px-5 py-2 text-xs text-rose-300" role="status" aria-live="polite"></p>
       </section>
 
       <section class="grid lg:grid-cols-[1.25fr_.75fr] gap-5">
@@ -143,6 +183,7 @@
           <p class="px-3 pb-3 text-[10px] text-slate-500">The 96.2% compliance value in the original sample report is also demo-only; live compliance requires defined attendance expectations.</p>
         </div>
       </details>
+      </div>
     </main>
 
     <footer class="max-w-7xl mx-auto px-4 sm:px-8 pb-6 w-full flex flex-col sm:flex-row justify-between gap-2 text-[10px] text-slate-600">
@@ -169,6 +210,12 @@
       return String(value).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
     }
 
+    function formatDate(value) {
+      if (!value) return '—';
+      const date = new Date(String(value).replace(' ', 'T') + (String(value).includes('Z') ? '' : 'Z'));
+      return Number.isNaN(date.getTime()) ? escapeHtml(value) : escapeHtml(date.toLocaleString());
+    }
+
     async function loadStats() {
       const days = Number(reportPeriod.value);
       const { stats } = await dashboardRequest('dashboard', {}, `&days=${days}`);
@@ -179,6 +226,33 @@
       document.getElementById('live-hours').textContent = Number(stats.dutyHours).toFixed(2);
       document.getElementById('live-leaves').textContent = stats.pendingLeaves;
       document.getElementById('period-label').textContent = `Last ${days} days`;
+      document.getElementById('sidebar-dtn-count').textContent = stats.dtnRequests;
+      document.getElementById('sidebar-attendance-count').textContent = stats.attendanceApprovals.length;
+
+      const dtnRows = stats.dtnRequestList.map(item => `<tr>
+        <td class="p-3 font-mono">${escapeHtml(item.code)}</td>
+        <td class="p-3">${escapeHtml(item.subject)}<p class="mt-1 max-w-xs whitespace-normal text-[10px] text-slate-500">${escapeHtml(item.description)}</p></td>
+        <td class="p-3">${escapeHtml(item.requesterEmail)}</td>
+        <td class="p-3">${escapeHtml(item.committee)}</td>
+        <td class="p-3">${escapeHtml(item.status.replaceAll('_', ' '))}</td>
+        <td class="p-3 whitespace-nowrap">${formatDate(item.createdAt)}</td>
+      </tr>`).join('');
+      document.getElementById('dtn-request-rows').innerHTML = dtnRows || '<tr><td class="p-5 text-slate-500" colspan="6">No DTN requests found in your access scope.</td></tr>';
+
+      const dutyLabels = { check_in: 'Check-in', check_out: 'Check-out', on_call: 'On-call' };
+      const approvalRows = stats.attendanceApprovals.map(item => `<tr>
+        <td class="p-3">${escapeHtml(item.name)}<span class="mt-1 block text-[10px] text-slate-500">${escapeHtml(item.email)}</span></td>
+        <td class="p-3">${escapeHtml(item.committee)}</td>
+        <td class="p-3">${escapeHtml(item.event)}</td>
+        <td class="p-3">${escapeHtml(item.venue)}</td>
+        <td class="p-3">${dutyLabels[item.dutyAction] || escapeHtml(item.dutyAction)}</td>
+        <td class="p-3 whitespace-nowrap">${formatDate(item.createdAt)}</td>
+        <td class="p-3"><div class="flex gap-2">
+          <button type="button" class="rounded-md bg-emerald-500/15 px-2 py-1 text-[10px] text-emerald-300 hover:bg-emerald-500/25" data-attendance-review="${item.id}" data-decision="approved">Approve</button>
+          <button type="button" class="rounded-md bg-rose-500/15 px-2 py-1 text-[10px] text-rose-300 hover:bg-rose-500/25" data-attendance-review="${item.id}" data-decision="rejected">Reject</button>
+        </div></td>
+      </tr>`).join('');
+      document.getElementById('attendance-approval-rows').innerHTML = approvalRows || '<tr><td class="p-5 text-slate-500" colspan="7">There are no attendance entries waiting for approval.</td></tr>';
 
       const colors = { CommAIRS: 'brandCyan', CommCREL: 'brandTeal', CommFIMA: 'brandOrange', CommPROL: 'brandAmber' };
       const rows = stats.byCommittee.map(item => {
@@ -204,19 +278,40 @@
           return;
         }
         if (!['adviser', 'executive'].includes(session.user.role)) {
-          window.location.replace('mechanism-tools.html');
+          window.location.replace('my-dashboard.php');
           return;
         }
         csrfToken = session.csrf;
         await loadStats();
       } catch (error) {
-        document.getElementById('live-committee-rows').innerHTML = `<p class="px-5 py-6 text-xs text-rose-300">${escapeHtml(error.message)} <a class="underline" href="login.html">Sign in</a></p>`;
+        document.getElementById('live-committee-rows').innerHTML = `<p class="px-5 py-6 text-xs text-rose-300">${escapeHtml(error.message)} <a class="underline" href="login.html">Login</a></p>`;
       }
     }
 
     reportPeriod.addEventListener('change', () => loadStats().catch(error => {
       document.getElementById('live-committee-rows').innerHTML = `<p class="px-5 py-6 text-xs text-rose-300">${escapeHtml(error.message)}</p>`;
     }));
+
+    document.getElementById('attendance-approval-rows').addEventListener('click', async event => {
+      const button = event.target.closest('button[data-attendance-review]');
+      if (!button) return;
+      const decision = button.dataset.decision;
+      const decisionLabel = decision === 'approved' ? 'approve' : 'reject';
+      if (!window.confirm(`Are you sure you want to ${decisionLabel} this attendance entry?`)) return;
+      button.disabled = true;
+      document.getElementById('approval-status').textContent = '';
+      try {
+        await dashboardRequest('attendance-review', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: Number(button.dataset.attendanceReview), decision })
+        });
+        await loadStats();
+      } catch (error) {
+        document.getElementById('approval-status').textContent = error.message || 'Unable to review this attendance entry.';
+        button.disabled = false;
+      }
+    });
 
     document.getElementById('sign-out').addEventListener('click', async () => {
       try {
